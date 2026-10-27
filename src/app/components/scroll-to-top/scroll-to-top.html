@@ -1,0 +1,15 @@
+<button
+  type="button"
+  aria-label="Scroll back to top"
+  (click)="scrollToTop()"
+  [class.opacity-100]="isVisible()"
+  [class.translate-y-0]="isVisible()"
+  [class.pointer-events-auto]="isVisible()"
+  [class.opacity-0]="!isVisible()"
+  [class.translate-y-4]="!isVisible()"
+  [class.pointer-events-none]="!isVisible()"
+  class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-card text-text-primary border border-border-default shadow-lg hover:border-brand-primary hover:text-brand-primary hover:bg-brand-soft hover:shadow-xl active:scale-95 transition-all duration-300 ease-in-out cursor-pointer group select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+>
+  <mat-icon class="text-base! w-4! h-4! text-brand-primary group-hover:-translate-y-0.5 transition-transform flex items-center justify-center">arrow_upward</mat-icon>
+  <span class="text-xs font-semibold tracking-wide">Back to top</span>
+</button>

@@ -1,0 +1,81 @@
+<div class="flex flex-col gap-3 p-4 rounded-xl border border-border-default bg-surface-card shadow-2xs">
+  <!-- Lemma and PoS -->
+  <div class="flex items-center justify-between gap-2">
+    <div class="flex gap-2 items-center">
+      <span class="text-xl font-bold text-text-primary">{{ lemma().lemma }}</span>
+      @if (lemma().pos === "noun") {
+        <span class="italic">{{ getGender() }}</span>
+      }
+      @if (lemma().pos === "article") {
+        <span class="italic">{{ getArticleType() }}</span>
+      }
+    </div>
+    <div class="flex items-center gap-2">
+      @if (lemma().pos) {
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-brand-soft text-brand-primary">
+          {{ lemma().pos }}
+        </span>
+      }
+      <button
+        type="button"
+        class="inline-flex size-9 items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-surface-page hover:text-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        [class.text-blue-600]="isSaved()"
+        [attr.aria-label]="isSaved() ? 'Remove saved lemma' : 'Save lemma'"
+        [attr.aria-pressed]="isSaved()"
+        (click)="toggleSaved()"
+      >
+        @if (isSaved()) {
+          <svg aria-hidden="true" class="size-5 fill-current" viewBox="0 0 24 24">
+            <path d="M6 3.75A1.75 1.75 0 0 1 7.75 2h8.5A1.75 1.75 0 0 1 18 3.75V22l-6-4-6 4V3.75Z" />
+          </svg>
+        } @else {
+          <svg aria-hidden="true" class="size-5 fill-none stroke-current" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 3.75A1.75 1.75 0 0 1 7.75 2h8.5A1.75 1.75 0 0 1 18 3.75V22l-6-4-6 4V3.75Z" />
+          </svg>
+        }
+      </button>
+    </div>
+  </div>
+
+  <!-- Possible forms of the selected word -->
+  @if (matchedForms().length > 0) {
+    <div class="flex flex-col gap-1">
+      <span class="font-medium text-text-secondary">Possible forms</span>
+      <ul class="flex flex-col gap-1 text-text-primary">
+        @for (form of matchedForms(); track $index) {
+          <li>{{ form.features.join(', ') }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  <!-- Glosses -->
+  @if (lemma().glosses.length > 0) {
+    <div class="flex flex-col gap-1">
+      <span class="font-medium text-text-secondary">Definitions</span>
+      <p class="font-medium text-text-primary">
+        {{ lemma().glosses.join(', ') }}
+      </p>
+    </div>
+  }
+
+  <!-- Inflected Forms -->
+  @if (lemma().forms.length > 0) {
+    <app-inflection-table [lemma]="lemma()" />
+  }
+
+  <!-- Examples -->
+  @if (lemma().examples.length > 0) {
+    <div class="flex flex-col gap-1.5">
+      <span class="text-xs font-medium text-text-secondary">Examples</span>
+      <div class="flex flex-col gap-2">
+        @for (eg of lemma().examples; track $index) {
+          <div class="flex flex-col gap-0.5 text-xs p-2 rounded-lg bg-surface-page border border-border-default">
+            <span class="font-serif text-text-primary">{{ eg.greek }}</span>
+            <span class="text-text-secondary italic">{{ eg.english }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

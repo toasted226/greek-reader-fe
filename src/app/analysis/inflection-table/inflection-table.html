@@ -1,0 +1,29 @@
+<!-- Inflected Forms -->
+<div class="flex flex-col gap-1.5">
+  <span class="font-medium text-text-secondary">Inflections</span>
+  <div class="flex flex-col gap-1 rounded-lg bg-surface-page p-2 border border-border-default">
+
+    @if (lemma().pos === "noun") {
+      <app-noun [lemma]="lemma()" />
+    } @else if (lemma().pos === "adjective") {
+      <app-adjective [lemma]="lemma()" />
+    } @else if (lemma().pos === "pronoun") {
+      <app-pronoun [lemma]="lemma()" />
+    } @else if (lemma().pos === "article") {
+      <app-article [lemma]="lemma()" />
+    } @else if (lemma().pos === "numeral") {
+      <app-numeral [lemma]="lemma()" />
+    } @else if (lemma().pos === "verb") {
+      <app-verb [lemma]="lemma()" />
+    } @else {
+      <!-- Fallback form rendering for non-noun POS -->
+      @for (form of lemma().forms; track $index) {
+        <div class="flex items-center justify-between gap-2 py-0.5">
+          <span class="font-semibold text-text-primary">{{ form.form }}</span>
+          <span class="text-text-secondary">{{ form.features.join(', ') }}</span>
+        </div>
+      }
+    }
+
+  </div>
+</div>

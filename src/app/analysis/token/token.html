@@ -1,0 +1,17 @@
+@if (token().token.isWord) {
+  <span
+    role="button"
+    tabindex="0"
+    (click)="selectToken()"
+    (keydown.enter)="selectToken()"
+    (keydown.space)="onSpaceKey($event)"
+    [class.bg-brand-soft]="isSelected()"
+    [class.text-brand-primary]="isSelected()"
+    [class.font-medium]="isSelected()"
+    [class.text-slate-600]="isUnmatched()"
+    [class.underline]="isUnmatched()"
+    class="inline cursor-pointer rounded px-1 py-0.5 transition-colors hover:bg-brand-soft hover:text-brand-primary select-none focus:outline-none focus:ring-2 focus:ring-brand-primary/40"
+  >{{ token().token.text }}</span>
+} @else {
+  <span class="select-text whitespace-pre-wrap">{{ token().token.text }}</span>
+}

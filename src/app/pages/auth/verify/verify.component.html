@@ -1,0 +1,21 @@
+<div class="flex flex-col items-center justify-center min-h-screen w-full text-center p-6 bg-surface-page text-text-primary">
+  @if (isLoading()) {
+    <div class="flex flex-col items-center justify-center gap-4">
+      <mat-progress-spinner
+        mode="indeterminate"
+        [diameter]="48"
+        aria-label="Signing you in..."
+      />
+      <p class="text-lg font-medium text-text-primary">Signing you in...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="flex flex-col items-center justify-center gap-3 max-w-md">
+      <div class="p-3 text-red-600 dark:text-red-400">
+        <mat-icon class="text-3xl! w-8! h-8!">error_outline</mat-icon>
+      </div>
+      <p class="text-base text-text-secondary" role="alert">
+        {{ errorMessage() }}
+      </p>
+    </div>
+  }
+</div>

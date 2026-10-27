@@ -1,0 +1,64 @@
+<div class="flex flex-col gap-4">
+  <header class="flex justify-between items-center">
+    <h2 class="text-[22px] font-semibold leading-7.5 text-text-primary">Analysed</h2>
+    @if (tokens()) {
+      <div class="flex items-center gap-3">
+        <span class="text-[13px] leading-4.5 text-text-secondary">{{ inflectedCount() }} Inflected, {{ unmatchedCount() }} Unmatched, {{ coverage() | percent }} Coverage</span>
+        <button
+          type="button"
+          (click)="clearAnalysis()"
+          class="text-xs font-medium text-brand-primary hover:underline cursor-pointer"
+        >
+          Edit text
+        </button>
+      </div>
+    } @else {
+      <span class="text-[13px] leading-4.5 text-text-secondary">You'll see coverage information here</span>
+    }
+  </header>
+
+  @if (tokens(); as tokenList) {
+    <div
+      data-testid="token-container"
+      class="w-full rounded-xl border border-border-default bg-surface-card p-6 text-2xl leading-relaxed text-text-primary whitespace-pre-wrap select-text"
+    >
+      @for (item of tokenList; track $index) {
+        <app-token
+          [token]="item"
+          [isSelected]="selectedToken() === item"
+          (selected)="selectToken($event)"
+        />
+      }
+    </div>
+  } @else {
+    <div class="flex flex-col gap-3 w-full">
+      <textarea
+        class="w-full min-h-40 rounded-xl border border-border-default bg-surface-card p-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/50 resize-y text-base disabled:opacity-60"
+        placeholder="Enter Greek text to analyse..."
+        rows="6"
+        [value]="inputText()"
+        (input)="inputText.set($any($event.target).value)"
+        (keydown.control.enter)="analyseText()"
+        (keydown.meta.enter)="analyseText()"
+        [disabled]="isLoading()"
+      ></textarea>
+      @if (errorMessage()) {
+        <div class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2.5">
+          {{ errorMessage() }}
+        </div>
+      }
+      <button
+        type="button"
+        (click)="analyseText()"
+        [disabled]="isLoading() || !inputText().trim()"
+        class="w-full py-2.5 px-4 rounded-xl bg-brand-primary hover:bg-brand-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-text-on-brand font-medium text-sm transition-colors flex items-center justify-center shadow-xs gap-2"
+      >
+        @if (isLoading()) {
+          <span>Analysing...</span>
+        } @else {
+          <span>Analyse</span>
+        }
+      </button>
+    </div>
+  }
+</div>

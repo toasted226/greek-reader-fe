@@ -1,0 +1,41 @@
+<div class="flex flex-col gap-4 w-full h-full">
+  <header class="flex items-center justify-between pb-2 border-b border-border-default shrink-0">
+    <h2 class="text-[20px] font-semibold leading-7 text-text-primary">Lemmas</h2>
+    @if (selectedToken()) {
+      <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-brand-soft text-brand-primary">
+        {{ selectedToken()?.token?.text }}
+      </span>
+    }
+  </header>
+
+  @if (selectedToken(); as currentToken) {
+    <div class="flex flex-col gap-4 overflow-y-auto pr-1 flex-1">
+      <!-- Sentence Context -->
+      @if (selectedSentence()) {
+        <div class="flex flex-col gap-1.5 p-3 rounded-xl bg-surface-page border border-border-default">
+          <span class="text-xs font-semibold uppercase tracking-wider text-text-secondary">Sentence Context</span>
+          <p class="text-sm leading-relaxed text-text-primary italic">
+            &ldquo;{{ selectedSentence() }}&rdquo;
+          </p>
+        </div>
+      }
+
+      <!-- Lemmas List -->
+      @if (selectedLemmas().length > 0) {
+        <div class="flex flex-col gap-3">
+          @for (lemma of selectedLemmas(); track $index) {
+            <app-lemma-item [lemma]="lemma" [contextSentence]="selectedSentence()" [matchedWord]="currentToken.token.text" />
+          }
+        </div>
+      } @else {
+        <div class="p-4 rounded-xl border border-dashed border-border-default text-center text-sm text-text-secondary">
+          No lexical dictionary entries found for &ldquo;{{ currentToken.token.text }}&rdquo;.
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="flex flex-col items-center justify-center text-center p-8 flex-1 text-text-secondary gap-2">
+      <p class="text-sm">Click on any word in the analysed text to inspect its dictionary lemma, part of speech, grammatical forms, and sentence context.</p>
+    </div>
+  }
+</div>

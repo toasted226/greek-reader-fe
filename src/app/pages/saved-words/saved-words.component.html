@@ -1,0 +1,27 @@
+<section class="flex w-full flex-col gap-6">
+  <header class="flex flex-col gap-1">
+    <h1 class="text-[30px] font-bold leading-9.5 text-text-primary">Saved Words</h1>
+    <p class="text-[15px] leading-5.5 text-text-secondary">Your saved Greek lemmas</p>
+  </header>
+
+  @if (savedLemmasService.loading()) {
+    <p class="text-text-secondary" role="status">Loading saved words…</p>
+  } @else if (savedLemmasService.loadError()) {
+    <div class="flex items-center gap-3 rounded-xl border border-border-default bg-surface-card p-4">
+      <p class="text-text-secondary">Saved words could not be loaded.</p>
+      <button type="button" class="font-medium text-brand-primary hover:underline" (click)="savedLemmasService.refresh()">
+        Try again
+      </button>
+    </div>
+  } @else if (savedLemmasService.savedLemmas().length === 0) {
+    <p class="rounded-xl border border-border-default bg-surface-card p-4 text-text-secondary">
+      You haven’t saved any words yet.
+    </p>
+  } @else {
+    <div class="flex flex-col gap-4">
+      @for (saved of savedLemmasService.savedLemmas(); track saved.id) {
+        <app-lemma-item [lemma]="saved.lemma" [contextSentence]="saved.contextSentence" />
+      }
+    </div>
+  }
+</section>

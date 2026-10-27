@@ -1,0 +1,72 @@
+<div class="flex flex-col gap-3">
+  @for (gender of genders; track gender.key) {
+    @if (hasGender(gender.key)) {
+      <table class="w-full">
+        <thead>
+        <tr>
+          <th colspan="3" class="inflection-group">{{ gender.label }}</th>
+        </tr>
+        <tr>
+          <th class="inflection-header">Case</th>
+          <th class="inflection-header">Singular</th>
+          <th class="inflection-header">Plural</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (grammaticalCase of cases; track grammaticalCase.key) {
+          <tr class="inflection-row">
+            <td class="inflection-label">{{ grammaticalCase.label }}</td>
+            <td class="inflection-value">{{ getForm([gender.key, grammaticalCase.key, "singular"]) }}</td>
+            <td class="inflection-value">{{ getForm([gender.key, grammaticalCase.key, "plural"]) }}</td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    }
+  }
+
+  @for (person of persons; track person.key) {
+    @if (hasPerson(person.key)) {
+      <table class="w-full">
+        <thead>
+        <tr>
+          <th colspan="3" class="inflection-group">{{ person.label }}</th>
+        </tr>
+        <tr>
+          <th class="inflection-header">Case</th>
+          <th class="inflection-header">Singular</th>
+          <th class="inflection-header">Plural</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (grammaticalCase of cases; track grammaticalCase.key) {
+          <tr class="inflection-row">
+            <td class="inflection-label">{{ grammaticalCase.label }}</td>
+            <td class="inflection-value">{{ getPersonForm([person.key, grammaticalCase.key, "singular"]) }}</td>
+            <td class="inflection-value">{{ getPersonForm([person.key, grammaticalCase.key, "plural"]) }}</td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    }
+  }
+
+  @if (otherForms.length > 0) {
+    <table class="w-full">
+      <thead>
+      <tr>
+        <th class="inflection-header">Form</th>
+        <th class="inflection-header">Features</th>
+      </tr>
+      </thead>
+      <tbody>
+      @for (form of otherForms; track $index) {
+        <tr class="inflection-row">
+          <td class="inflection-value">{{ form.form }}</td>
+          <td class="inflection-label">{{ form.features.join(', ') }}</td>
+        </tr>
+      }
+      </tbody>
+    </table>
+  }
+</div>

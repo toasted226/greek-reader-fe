@@ -1,3 +1,35 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+@theme {
+  /* Brand Tokens */
+  --color-brand-primary: #1d4ed8;
+  --color-brand-soft: #dbeafe;
+  --color-brand-accent: #f2a541;
+
+  /* Text Tokens */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-on-brand: #ffffff;
+
+  /* Surface Tokens */
+  --color-surface-page: #f8fafc;
+  --color-surface-card: #ffffff;
+  --color-surface-sunken: #e2e8f0;
+
+  /* Border Tokens */
+  --color-border-default: #cbd5e1;
+
+  /* Semantic Aliases */
+  --color-brand: #1d4ed8;
+  --color-border: #cbd5e1;
+
+  --text-size-base: 1.125rem;
+}
+
+/* Global defaults */
+html, body {
+  margin: 0;
+  height: 100%;
+}

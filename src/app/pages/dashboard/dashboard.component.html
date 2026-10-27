@@ -1,0 +1,43 @@
+<div class="flex h-screen w-screen flex-col overflow-hidden bg-surface-page text-text-primary">
+  <mat-toolbar class="bg-surface-card! text-text-primary! border-b border-border-default z-10 flex items-center px-4 shrink-0 shadow-xs">
+    <div class="flex items-center gap-2.5 select-none">
+      <span class="text-brand-primary font-bold text-2xl leading-none">Ω</span>
+      <span class="font-bold text-xl tracking-tight">Greek Reader</span>
+    </div>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="flex-1 w-full bg-transparent!">
+    <!-- Side navigation content -->
+    <mat-sidenav
+      #sidenav
+      mode="side"
+      opened="true"
+      class="group w-60! border-r! border-border-default! bg-surface-card! overflow-x-hidden transition-[width] duration-300 ease-in-out shadow-xs"
+    >
+      <mat-nav-list class="py-2">
+        <a mat-list-item routerLink="/dashboard/analyse" routerLinkActive="bg-brand-soft! text-brand-primary!" class="flex items-center text-text-secondary hover:text-text-primary hover:bg-surface-sunken transition-colors">
+          <mat-icon matListItemIcon class="text-inherit">menu_book</mat-icon>
+          <span class="opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">Text Analyser</span>
+        </a>
+        <a mat-list-item routerLink="/dashboard/lemmas" routerLinkActive="bg-brand-soft! text-brand-primary!" class="flex items-center text-text-secondary hover:text-text-primary hover:bg-surface-sunken transition-colors">
+          <mat-icon matListItemIcon class="text-inherit">bookmark</mat-icon>
+          <span class="opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">Saved Words</span>
+        </a>
+        <a mat-list-item routerLink="/dashboard/settings" routerLinkActive="bg-brand-soft! text-brand-primary!" class="flex items-center text-text-secondary hover:text-text-primary hover:bg-surface-sunken transition-colors">
+          <mat-icon matListItemIcon class="text-inherit">settings</mat-icon>
+          <span class="opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">Settings</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Main app content -->
+    <mat-sidenav-content #sidenavContent class="bg-surface-page! flex flex-col h-full overflow-y-auto">
+      <main class="p-6 lg:p-8 flex-1 flex flex-col min-h-0 w-full">
+        <!-- Your router-outlet or main page content goes here -->
+        <router-outlet></router-outlet>
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+
+  <app-scroll-to-top [target]="sidenavContent" />
+</div>

@@ -1,0 +1,48 @@
+<div class="flex flex-col gap-6 w-full" [class.select-none]="isDragging()">
+  <div class="flex flex-col gap-0.5 shrink-0">
+    <h1 class="text-[30px] font-bold leading-9.5 text-text-primary">Greek Text Analyser</h1>
+    <span class="text-[15px] leading-5.5 text-text-secondary">Analyse plaintext Greek to view glosses and inflections</span>
+  </div>
+
+  <main
+    [style.--infopanel-width.px]="infoPanelWidth()"
+    class="flex flex-col lg:flex-row gap-4 lg:gap-2 w-full items-start"
+  >
+    <div class="flex-1 min-w-0 w-full bg-surface-card rounded-[20px] p-5 shadow-xs border border-border-default">
+      <app-analysis />
+    </div>
+
+    <!-- Resize Divider Handle -->
+    <div
+      role="separator"
+      aria-orientation="vertical"
+      aria-label="Resize info panel"
+      tabindex="0"
+      [attr.aria-valuenow]="infoPanelWidth()"
+      [attr.aria-valuemin]="280"
+      [attr.aria-valuemax]="600"
+      (pointerdown)="onResizeStart($event)"
+      (pointermove)="onResizeMove($event)"
+      (pointerup)="onResizeEnd($event)"
+      (pointercancel)="onResizeEnd($event)"
+      (keydown)="onKeyDown($event)"
+      class="hidden lg:flex items-center justify-center w-3 self-stretch cursor-col-resize group select-none py-12 shrink-0 touch-none outline-none focus-visible:ring-2 focus-visible:ring-brand-primary rounded"
+    >
+      <div
+        class="w-1 h-8 rounded-full transition-all"
+        [class.bg-brand-primary]="isDragging()"
+        [class.h-12]="isDragging()"
+        [class.w-1.5]="isDragging()"
+        [class.bg-border-default]="!isDragging()"
+        [class.group-hover:bg-brand-primary]="!isDragging()"
+        [class.group-hover:h-12]="!isDragging()"
+      ></div>
+    </div>
+
+    <div
+      class="w-full lg:w-[var(--infopanel-width)] shrink-0 sticky top-6 lg:top-8 bg-surface-card rounded-[20px] p-5 pb-3.75 shadow-xs border border-border-default max-h-[calc(100vh-6rem)] lg:max-h-[calc(100vh-7rem)] overflow-y-auto"
+    >
+      <app-info-panel />
+    </div>
+  </main>
+</div>

@@ -1,0 +1,27 @@
+<div class="flex flex-col gap-3">
+  @for (gender of genders; track gender.key) {
+    @if (hasGender(gender.key)) {
+      <table class="w-full">
+        <thead>
+        <tr>
+          <th colspan="3" class="inflection-gender">{{ gender.label }}</th>
+        </tr>
+        <tr>
+          <th class="inflection-header">Case</th>
+          <th class="inflection-header">Singular</th>
+          <th class="inflection-header">Plural</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (grammaticalCase of cases; track grammaticalCase.key) {
+          <tr class="inflection-row">
+            <td class="inflection-label">{{ grammaticalCase.label }}</td>
+            <td class="inflection-value">{{ getForm([gender.key, grammaticalCase.key, "singular"]) }}</td>
+            <td class="inflection-value">{{ getForm([gender.key, grammaticalCase.key, "plural"]) }}</td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    }
+  }
+</div>
