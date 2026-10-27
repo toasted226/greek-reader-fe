@@ -47,8 +47,9 @@ describe('DashboardComponent', () => {
     expect(navList).toBeTruthy();
     expect(compiled.textContent).toContain('Text Analyser');
     expect(compiled.textContent).toContain('Saved Words');
-    expect(compiled.textContent).toContain('Profile');
-    expect(compiled.textContent).toContain('SettingsComponent');
+    expect(compiled.textContent).toContain('Settings');
+    expect(compiled.textContent).toContain('Sign out');
     expect(compiled.querySelector('a[routerLink="/dashboard/lemmas"]')).toBeTruthy();
+    expect(compiled.querySelector('a[routerLink="/dashboard/settings"]')).toBeTruthy();
   });
 });

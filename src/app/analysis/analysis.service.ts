@@ -7,13 +7,23 @@ export function extractSentenceForToken(
   tokens: AnalyseResponse[] | null,
   selectedToken: AnalyseResponse | null,
 ): string {
+  return extractSentenceTokensForToken(tokens, selectedToken)
+    .map((item) => item.token.text)
+    .join('')
+    .trim();
+}
+
+export function extractSentenceTokensForToken(
+  tokens: AnalyseResponse[] | null,
+  selectedToken: AnalyseResponse | null,
+): AnalyseResponse[] {
   if (!tokens || !selectedToken) {
-    return '';
+    return [];
   }
 
   const index = tokens.indexOf(selectedToken);
   if (index === -1) {
-    return '';
+    return [];
   }
 
   // Find start index by searching backward for the previous sentence delimiter
@@ -36,11 +46,7 @@ export function extractSentenceForToken(
     }
   }
 
-  return tokens
-    .slice(startIdx, endIdx + 1)
-    .map((item) => item.token.text)
-    .join('')
-    .trim();
+  return tokens.slice(startIdx, endIdx + 1);
 }
 
 @Injectable({
@@ -73,6 +79,26 @@ export class AnalysisService {
   readonly selectedSentence = computed(() =>
     extractSentenceForToken(this.tokens(), this.selectedToken()),
   );
+
+  readonly selectedSentenceParts = computed(() => {
+    const selectedToken = this.selectedToken();
+    const rawParts = extractSentenceTokensForToken(this.tokens(), selectedToken).map((item) => ({
+      text: item.token.text,
+      selected: item === selectedToken,
+    }));
+    const fullText = rawParts.map((part) => part.text).join('');
+    const trimmedStart = fullText.length - fullText.trimStart().length;
+    const trimmedEnd = fullText.trimEnd().length;
+
+    let offset = 0;
+    return rawParts.flatMap((part) => {
+      const start = Math.max(0, trimmedStart - offset);
+      const end = Math.min(part.text.length, trimmedEnd - offset);
+      offset += part.text.length;
+
+      return start < end ? [{ ...part, text: part.text.slice(start, end) }] : [];
+    });
+  });
 
   readonly selectedLemmas = computed<LemmaResponse[]>(() => this.selectedToken()?.lemmas ?? []);
 

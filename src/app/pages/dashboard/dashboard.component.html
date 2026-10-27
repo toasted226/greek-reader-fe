@@ -14,20 +14,37 @@
       opened="true"
       class="group w-60! border-r! border-border-default! bg-surface-card! overflow-x-hidden transition-[width] duration-300 ease-in-out shadow-xs"
     >
-      <mat-nav-list class="py-2">
-        <a mat-list-item routerLink="/dashboard/analyse" routerLinkActive="bg-brand-soft! text-brand-primary!" class="flex items-center text-text-secondary hover:text-text-primary hover:bg-surface-sunken transition-colors">
-          <mat-icon matListItemIcon class="text-inherit">menu_book</mat-icon>
-          <span class="opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">Text Analyser</span>
-        </a>
-        <a mat-list-item routerLink="/dashboard/lemmas" routerLinkActive="bg-brand-soft! text-brand-primary!" class="flex items-center text-text-secondary hover:text-text-primary hover:bg-surface-sunken transition-colors">
-          <mat-icon matListItemIcon class="text-inherit">bookmark</mat-icon>
-          <span class="opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">Saved Words</span>
-        </a>
-        <a mat-list-item routerLink="/dashboard/settings" routerLinkActive="bg-brand-soft! text-brand-primary!" class="flex items-center text-text-secondary hover:text-text-primary hover:bg-surface-sunken transition-colors">
-          <mat-icon matListItemIcon class="text-inherit">settings</mat-icon>
-          <span class="opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">Settings</span>
-        </a>
-      </mat-nav-list>
+      <div class="flex h-full flex-col">
+        <mat-nav-list class="py-2">
+          <a mat-list-item routerLink="/dashboard/analyse" routerLinkActive="bg-brand-soft! text-brand-primary!" class="flex items-center text-text-secondary hover:text-text-primary hover:bg-surface-sunken transition-colors">
+            <mat-icon matListItemIcon class="text-inherit">menu_book</mat-icon>
+            <span class="opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">Text Analyser</span>
+          </a>
+          <a mat-list-item routerLink="/dashboard/lemmas" routerLinkActive="bg-brand-soft! text-brand-primary!" class="flex items-center text-text-secondary hover:text-text-primary hover:bg-surface-sunken transition-colors">
+            <mat-icon matListItemIcon class="text-inherit">bookmark</mat-icon>
+            <span class="opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">Saved Words</span>
+          </a>
+          <a mat-list-item routerLink="/dashboard/settings" routerLinkActive="bg-brand-soft! text-brand-primary!" class="flex items-center text-text-secondary hover:text-text-primary hover:bg-surface-sunken transition-colors">
+            <mat-icon matListItemIcon class="text-inherit">settings</mat-icon>
+            <span class="opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">Settings</span>
+          </a>
+        </mat-nav-list>
+
+        <div class="mt-auto border-t border-border-default p-2">
+          @if (signOutError()) {
+            <p class="mb-2 px-2 text-xs text-red-700" role="alert">{{ signOutError() }}</p>
+          }
+          <button
+            type="button"
+            (click)="signOut()"
+            [disabled]="isSigningOut()"
+            class="flex h-11 w-full cursor-pointer items-center gap-3 rounded-xl px-4 text-sm font-medium text-text-secondary transition-colors hover:bg-surface-sunken hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:cursor-wait disabled:opacity-60"
+          >
+            <mat-icon class="text-inherit">logout</mat-icon>
+            <span>{{ isSigningOut() ? 'Signing out…' : 'Sign out' }}</span>
+          </button>
+        </div>
+      </div>
     </mat-sidenav>
 
     <!-- Main app content -->

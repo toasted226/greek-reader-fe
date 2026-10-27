@@ -79,6 +79,29 @@ export class AuthEndpointsService {
         });
     }
 
+    authLogoutPost(observe?: 'body', options?: RequestOptions<'json'>): Observable<any>;
+    authLogoutPost(observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<any>>;
+    authLogoutPost(observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<any>>;
+    authLogoutPost(observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
+        const url = `${this.basePath}/auth/logout`;
+
+        let headers: HttpHeaders;
+        if (options?.headers instanceof HttpHeaders) {
+            headers = options.headers;
+        } else {
+            headers = new HttpHeaders(options?.headers);
+        }
+
+        return this.httpClient.request('post', url, {
+            body: null,
+            observe,
+            headers,
+            reportProgress: options?.reportProgress,
+            withCredentials: options?.withCredentials,
+            context: this.createContextWithClientId(options?.context)
+        });
+    }
+
     authMeGet(observe?: 'body', options?: RequestOptions<'json'>): Observable<MeResponse>;
     authMeGet(observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<MeResponse>>;
     authMeGet(observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<MeResponse>>;

@@ -1,25 +1,63 @@
-<main class="flex flex-col gap-6">
-  <header>
-    <h1 class="text-[30px] font-bold leading-9.5 text-text-primary">Settings</h1>
-    <span class="text-[15px] leading-5.5 text-text-secondary">Configure settings or manage your profile</span>
+<main class="flex flex-col gap-7">
+  <header class="flex max-w-3xl flex-col gap-1.5">
+    <span class="text-xs font-semibold uppercase tracking-[0.14em] text-brand-primary">Your account</span>
+    <h1 class="text-3xl font-bold leading-tight tracking-tight text-text-primary">Settings</h1>
+    <p class="text-sm leading-6 text-text-secondary">Manage your account and personal data.</p>
   </header>
 
-  <section class="rounded-xl border border-border-default bg-surface-card p-6 text-text-secondary w-128">
-    <div class="mb-8">
-      <h2 class="text-[22px] font-semibold leading-7.5 text-text-primary mb-2">Delete your account</h2>
-      <span class="text-[15px] leading-5.5 text-text-secondary">Deleting your account will permanently delete all of your data from our servers. This action cannot be undone.</span>
+  <section
+    aria-labelledby="delete-account-heading"
+    class="w-full max-w-3xl overflow-hidden rounded-2xl border border-red-200 bg-surface-card shadow-xs"
+  >
+    <div class="border-b border-red-100 bg-red-50/70 p-5 sm:p-6">
+      <div class="flex items-start gap-4">
+        <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-700" aria-hidden="true">
+          <mat-icon>person_remove</mat-icon>
+        </span>
+        <div class="min-w-0">
+          <span class="text-xs font-semibold uppercase tracking-[0.12em] text-red-700">Danger zone</span>
+          <h2 id="delete-account-heading" class="mt-1 text-xl font-semibold tracking-tight text-text-primary">
+            Delete your account
+          </h2>
+          <p class="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">
+            Permanently remove your account and all of your data from our servers. You will be signed out after deletion.
+          </p>
+        </div>
+      </div>
     </div>
 
-    <button
-      type="button"
-      (click)="deleteAccount()"
-      class="w-full py-2.5 px-4 rounded-xl bg-red-500 hover:bg-red-500/90 disabled:opacity-50 disabled:cursor-not-allowed text-text-on-brand font-medium text-sm transition-colors flex items-center justify-center shadow-xs gap-2"
-    >
-      @if (isLoading()) {
-        <span>Deleting...</span>
-      } @else {
-        <span>Delete</span>
+    <div class="flex flex-col gap-5 p-5 sm:p-6">
+      <div class="flex items-start gap-3 rounded-xl border border-border-default bg-surface-page p-4">
+        <mat-icon class="mt-0.5 shrink-0 text-text-secondary">info</mat-icon>
+        <p class="text-sm leading-5.5 text-text-secondary">
+          This action cannot be undone. You will be asked to confirm before the deletion request is sent.
+        </p>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 p-3.5 text-sm text-red-700" role="alert">
+          <mat-icon class="shrink-0">error_outline</mat-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
       }
-    </button>
+
+      <div class="flex flex-col-reverse gap-3 border-t border-border-default pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-xs leading-5 text-text-secondary">This permanently deletes your account.</p>
+        <button
+          type="button"
+          (click)="confirmAccountDeletion()"
+          [disabled]="isLoading()"
+          class="inline-flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-red-300 bg-white px-4 text-sm font-semibold text-red-700 shadow-xs transition-colors hover:border-red-400 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+        >
+          @if (isLoading()) {
+            <mat-progress-spinner mode="indeterminate" [diameter]="18" aria-label="Deleting account" />
+            <span>Deleting account…</span>
+          } @else {
+            <mat-icon class="text-[20px]!">delete_outline</mat-icon>
+            <span>Delete account</span>
+          }
+        </button>
+      </div>
+    </div>
   </section>
 </main>

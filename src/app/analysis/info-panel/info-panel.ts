@@ -15,5 +15,6 @@ export class InfoPanel {
 
   readonly selectedToken = this.analysisService.selectedToken;
   readonly selectedSentence = this.analysisService.selectedSentence;
+  readonly selectedSentenceParts = this.analysisService.selectedSentenceParts;
   readonly selectedLemmas = this.analysisService.selectedLemmas;
 }
