@@ -1,4 +1,5 @@
-import { Component, computed, input, inject } from '@angular/core';
+import { Component, computed, input, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { LemmaResponse } from '../../../api';
 import { InflectionTable } from '../inflection-table/inflection-table';
 import { findMatchingForms } from '../inflection-utils';
@@ -14,7 +15,7 @@ const isGender = (feature: string): boolean => {
 
 @Component({
   selector: 'app-lemma-item',
-  imports: [InflectionTable],
+  imports: [InflectionTable, FormsModule],
   templateUrl: './lemma-item.html',
   host: {
     class: 'block',
@@ -26,6 +27,7 @@ export class LemmaItem {
   readonly contextSentence = input.required<string>();
   readonly matchedWord = input('');
   readonly matchedForms = computed(() => findMatchingForms(this.lemma().forms, this.matchedWord()));
+  readonly showInflectionTable = signal(false);
 
   isSaved(): boolean {
     return this.savedLemmas.isSaved(this.lemma());

@@ -1,0 +1,17 @@
+@reference '../../../../styles.css';
+
+.inflection-header {
+  @apply text-left pb-1 font-medium text-text-secondary;
+}
+
+.inflection-row {
+  @apply border-t border-border-default;
+}
+
+.inflection-label {
+  @apply py-1 text-text-secondary;
+}
+
+.inflection-value {
+  @apply py-1 text-text-primary;
+}

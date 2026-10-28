@@ -3,6 +3,7 @@ import { LemmaResponse } from '../../../api';
 import { findForm } from '../inflection-utils';
 import { Adjective } from '../parts-of-speech/adjective/adjective';
 import { Noun } from '../parts-of-speech/noun/noun';
+import { ProperNoun } from '../parts-of-speech/proper-noun/proper-noun';
 import { Pronoun } from '../parts-of-speech/pronoun/pronoun';
 import { Article } from '../parts-of-speech/article/article';
 import { Numeral } from '../parts-of-speech/numeral/numeral';
@@ -10,7 +11,7 @@ import { Verb } from '../parts-of-speech/verb/verb';
 
 @Component({
   selector: 'app-inflection-table',
-  imports: [Adjective, Noun, Pronoun, Article, Numeral, Verb],
+  imports: [Adjective, Noun, ProperNoun, Pronoun, Article, Numeral, Verb],
   templateUrl: './inflection-table.html',
   styleUrl: './inflection-table.css',
   host: {
