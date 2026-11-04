@@ -7,6 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "generate:api": "ng-openapi -i http://localhost:3000/openapi/v1.json -o src/api",
     "serve:ssr:greek-reader": "node dist/greek-reader/server/server.mjs"
   },
   "private": true,

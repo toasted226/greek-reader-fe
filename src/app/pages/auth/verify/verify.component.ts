@@ -3,7 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
-import { AuthEndpointsService } from '../../../../api';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-verify',
@@ -17,7 +17,7 @@ import { AuthEndpointsService } from '../../../../api';
 export class VerifyComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly authService = inject(AuthEndpointsService);
+  private readonly authService = inject(AuthService);
   private readonly platformId = inject(PLATFORM_ID);
 
   readonly isLoading = signal(true);
@@ -36,7 +36,7 @@ export class VerifyComponent implements OnInit {
     }
 
     this.authService
-      .authVerifyPost({ token: token.trim() }, 'body', { withCredentials: true })
+      .verifySignIn(token.trim())
       .subscribe({
         next: () => {
           this.router.navigate(['/']);

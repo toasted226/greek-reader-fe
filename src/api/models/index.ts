@@ -26,6 +26,10 @@ export interface CreateUserLemmaRequest {
     contextSentence: string;
 }
 
+export interface CsrfTokenResponse {
+    token: string;
+}
+
 export interface ExampleResponse {
     greek: string;
     english: string;
@@ -35,6 +39,8 @@ export interface FormResponse {
     form: string;
     features: Array<string>;
 }
+
+export type IFormFile = Blob;
 
 export interface LemmaResponse {
     id: number | string;
@@ -61,11 +67,21 @@ export interface TokenResponse {
     isWord: boolean;
 }
 
+export interface UploadFileResponse {
+    fileName: string;
+    characterCount: number | string;
+}
+
 export interface UserLemmaResponse {
     id: number | string;
     userId: number | string;
     lemma: LemmaResponse;
     contextSentence: string;
+}
+
+export interface VerifyOtpRequest {
+    email: string;
+    code: string;
 }
 
 export interface VerifyRequest {

@@ -5,6 +5,7 @@ import { provideDefaultClient } from '../api';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { CredentialsInterceptor } from './auth/credentials.interceptor';
+import { CsrfInterceptor } from './auth/csrf.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -13,6 +14,11 @@ export const appConfig: ApplicationConfig = {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: CredentialsInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CsrfInterceptor,
       multi: true,
     },
     provideBrowserGlobalErrorListeners(),

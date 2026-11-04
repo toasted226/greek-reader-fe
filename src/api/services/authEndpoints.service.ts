@@ -12,7 +12,7 @@ import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from "../tokens";
 import { HttpParamsBuilder } from "../utils/http-params-builder";
-import { SignInRequest, RequestOptions, VerifyRequest, MeResponse } from "../models";
+import { SignInRequest, RequestOptions, VerifyRequest, VerifyOtpRequest, MeResponse, CsrfTokenResponse } from "../models";
 
 @Injectable({ providedIn: "root" })
 export class AuthEndpointsService {
@@ -102,6 +102,60 @@ export class AuthEndpointsService {
         });
     }
 
+    authOtpRequestPost(signInRequest: SignInRequest, observe?: 'body', options?: RequestOptions<'json'>): Observable<any>;
+    authOtpRequestPost(signInRequest: SignInRequest, observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<any>>;
+    authOtpRequestPost(signInRequest: SignInRequest, observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<any>>;
+    authOtpRequestPost(signInRequest: SignInRequest, observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
+        const url = `${this.basePath}/auth/otp/request`;
+
+        let headers: HttpHeaders;
+        if (options?.headers instanceof HttpHeaders) {
+            headers = options.headers;
+        } else {
+            headers = new HttpHeaders(options?.headers);
+        }
+        // Set Content-Type for JSON requests if not already set
+        if (!headers.has('Content-Type')) {
+            headers = headers.set('Content-Type', 'application/json');
+        }
+
+        return this.httpClient.request('post', url, {
+            body: signInRequest,
+            observe,
+            headers,
+            reportProgress: options?.reportProgress,
+            withCredentials: options?.withCredentials,
+            context: this.createContextWithClientId(options?.context)
+        });
+    }
+
+    authOtpVerifyPost(verifyOtpRequest: VerifyOtpRequest, observe?: 'body', options?: RequestOptions<'json'>): Observable<any>;
+    authOtpVerifyPost(verifyOtpRequest: VerifyOtpRequest, observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<any>>;
+    authOtpVerifyPost(verifyOtpRequest: VerifyOtpRequest, observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<any>>;
+    authOtpVerifyPost(verifyOtpRequest: VerifyOtpRequest, observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
+        const url = `${this.basePath}/auth/otp/verify`;
+
+        let headers: HttpHeaders;
+        if (options?.headers instanceof HttpHeaders) {
+            headers = options.headers;
+        } else {
+            headers = new HttpHeaders(options?.headers);
+        }
+        // Set Content-Type for JSON requests if not already set
+        if (!headers.has('Content-Type')) {
+            headers = headers.set('Content-Type', 'application/json');
+        }
+
+        return this.httpClient.request('post', url, {
+            body: verifyOtpRequest,
+            observe,
+            headers,
+            reportProgress: options?.reportProgress,
+            withCredentials: options?.withCredentials,
+            context: this.createContextWithClientId(options?.context)
+        });
+    }
+
     authMeGet(observe?: 'body', options?: RequestOptions<'json'>): Observable<MeResponse>;
     authMeGet(observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<MeResponse>>;
     authMeGet(observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<MeResponse>>;
@@ -142,6 +196,32 @@ export class AuthEndpointsService {
         }
 
         return this.httpClient.request('delete', url, {
+            observe,
+            headers,
+            reportProgress: options?.reportProgress,
+            withCredentials: options?.withCredentials,
+            context: this.createContextWithClientId(options?.context)
+        });
+    }
+
+    authCsrfGet(observe?: 'body', options?: RequestOptions<'json'>): Observable<CsrfTokenResponse>;
+    authCsrfGet(observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<CsrfTokenResponse>>;
+    authCsrfGet(observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<CsrfTokenResponse>>;
+    authCsrfGet(observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
+        const url = `${this.basePath}/auth/csrf`;
+
+        let headers: HttpHeaders;
+        if (options?.headers instanceof HttpHeaders) {
+            headers = options.headers;
+        } else {
+            headers = new HttpHeaders(options?.headers);
+        }
+        // Advertise the response content type declared in the spec
+        if (!headers.has('Accept')) {
+            headers = headers.set('Accept', 'application/json');
+        }
+
+        return this.httpClient.request('get', url, {
             observe,
             headers,
             reportProgress: options?.reportProgress,

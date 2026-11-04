@@ -4,20 +4,20 @@ import { PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { NEVER, of, throwError } from 'rxjs';
 import { VerifyComponent } from './verify.component';
-import { AuthEndpointsService } from '../../../../api';
+import { AuthService } from '../../../auth/auth.service';
 
 describe('VerifyComponent', () => {
-  let authServiceMock: { authVerifyPost: ReturnType<typeof vi.fn> };
+  let authServiceMock: { verifySignIn: ReturnType<typeof vi.fn> };
   let routerMock: { navigate: ReturnType<typeof vi.fn> };
 
   const createComponent = (
     queryParams: Record<string, string> = {},
     platformId: string = 'browser',
-    authVerifyPostMock = vi.fn().mockReturnValue(of({})),
+    verifySignInMock = vi.fn().mockReturnValue(of(undefined)),
   ) => {
     TestBed.resetTestingModule();
     authServiceMock = {
-      authVerifyPost: authVerifyPostMock,
+      verifySignIn: verifySignInMock,
     };
     routerMock = {
       navigate: vi.fn(),
@@ -35,7 +35,7 @@ describe('VerifyComponent', () => {
           },
         },
         { provide: Router, useValue: routerMock },
-        { provide: AuthEndpointsService, useValue: authServiceMock },
+        { provide: AuthService, useValue: authServiceMock },
         { provide: PLATFORM_ID, useValue: platformId },
       ],
     });
@@ -66,31 +66,22 @@ describe('VerifyComponent', () => {
 
   it('should verify token and redirect to "/" on success', () => {
     const { fixture } = createComponent({ token: 'valid-token' });
-    authServiceMock.authVerifyPost.mockReturnValue(of({ success: true }));
 
     fixture.detectChanges();
 
-    expect(authServiceMock.authVerifyPost).toHaveBeenCalledWith(
-      { token: 'valid-token' },
-      'body',
-      { withCredentials: true },
-    );
+    expect(authServiceMock.verifySignIn).toHaveBeenCalledWith('valid-token');
     expect(routerMock.navigate).toHaveBeenCalledWith(['/']);
   });
 
   it('should show error message when verification fails', () => {
     const { fixture, component } = createComponent({ token: 'invalid-token' });
-    authServiceMock.authVerifyPost.mockReturnValue(
+    authServiceMock.verifySignIn.mockReturnValue(
       throwError(() => new Error('Verification failed')),
     );
 
     fixture.detectChanges();
 
-    expect(authServiceMock.authVerifyPost).toHaveBeenCalledWith(
-      { token: 'invalid-token' },
-      'body',
-      { withCredentials: true },
-    );
+    expect(authServiceMock.verifySignIn).toHaveBeenCalledWith('invalid-token');
     expect(component.isLoading()).toBe(false);
     expect(component.errorMessage()).toBe(
       'Unable to verify your sign-in request. Please try again later.',
@@ -108,7 +99,7 @@ describe('VerifyComponent', () => {
 
     fixture.detectChanges();
 
-    expect(authServiceMock.authVerifyPost).not.toHaveBeenCalled();
+    expect(authServiceMock.verifySignIn).not.toHaveBeenCalled();
     expect(component.isLoading()).toBe(false);
     expect(component.errorMessage()).toBe(
       'Unable to verify your sign-in request. Please try again later.',
@@ -125,7 +116,7 @@ describe('VerifyComponent', () => {
 
     fixture.detectChanges();
 
-    expect(authServiceMock.authVerifyPost).not.toHaveBeenCalled();
+    expect(authServiceMock.verifySignIn).not.toHaveBeenCalled();
     expect(component.isLoading()).toBe(false);
     expect(component.errorMessage()).toBe(
       'Unable to verify your sign-in request. Please try again later.',
@@ -137,6 +128,6 @@ describe('VerifyComponent', () => {
 
     fixture.detectChanges();
 
-    expect(authServiceMock.authVerifyPost).not.toHaveBeenCalled();
+    expect(authServiceMock.verifySignIn).not.toHaveBeenCalled();
   });
 });
