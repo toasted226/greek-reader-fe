@@ -213,7 +213,7 @@ describe('FileAnalyserComponent', () => {
 
     expect(component.isUploading()).toBe(false);
     expect(component.view()).toBe('library');
-    expect(component.errorMessage()).toBe('File size exceeds the 1 MB limit.');
+    expect(component.errorMessage()).toBe('The uploaded file exceeds the per-file size limit.');
     expect((fixture.nativeElement as HTMLElement).querySelector('app-file-upload')).toBeTruthy();
   });
 

@@ -193,22 +193,18 @@ export class FileAnalyserComponent implements OnInit {
             message = 'The uploaded file is empty, corrupted, or contains unsupported characters. Please upload a valid UTF-8 plain text file.';
           } else if (err?.status === 401) {
             message = 'You must be signed in to upload files.';
-          } else if (err?.status === 403) {
-            message = 'You do not have permission to upload files.';
           } else if (err?.status === 413) {
-            message = 'File size exceeds the 1 MB limit.';
+            message = err?.error?.code === 'user_text_storage_limit_exceeded'
+              ? 'Your files have reached the 50 MiB total storage limit. Delete a file before uploading another.'
+              : 'The uploaded file exceeds the per-file size limit.';
+          } else if (err?.status === 409) {
+            message = 'You have reached the 100 file limit. Delete a file before uploading another.';
           } else if (err?.status === 415) {
             message = 'Unsupported file format. Please upload a plain text (.txt, .text) file.';
           } else if (err?.status === 429) {
             message = 'Upload limit reached. Please wait a moment before trying again.';
           } else if (err?.status >= 500) {
             message = 'A server error occurred while processing the file. Please try again later.';
-          } else if (typeof err?.error === 'string' && err.error.trim()) {
-            message = err.error;
-          } else if (err?.error?.message && typeof err.error.message === 'string') {
-            message = err.error.message;
-          } else if (err?.error?.detail && typeof err.error.detail === 'string') {
-            message = err.error.detail;
           }
 
           this.errorMessage.set(message);

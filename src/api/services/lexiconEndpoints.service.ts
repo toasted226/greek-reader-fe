@@ -240,19 +240,73 @@ export class LexiconEndpointsService {
 
         const formData = new FormData();
         if (file !== undefined) {
-            if (file instanceof File) {
-                formData.append('file', file, file.name);
-            } else if (file instanceof Blob) {
-                formData.append('file', file);
-            } else {
-                formData.append('file', String(file));
-            }
+            formData.append('file', String(file));
         }
 
         return this.httpClient.request('post', url, {
             body: formData,
             observe,
             headers,
+            reportProgress: options?.reportProgress,
+            withCredentials: options?.withCredentials,
+            context: this.createContextWithClientId(options?.context)
+        });
+    }
+
+    filesByIdGet(fileId: number | string, observe?: 'body', options?: RequestOptions<'json'>): Observable<UploadFileResponse>;
+    filesByIdGet(fileId: number | string, observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<UploadFileResponse>>;
+    filesByIdGet(fileId: number | string, observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<UploadFileResponse>>;
+    filesByIdGet(fileId: number | string, observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
+        const url = `${this.basePath}/files/by-id`;
+
+        let params = new HttpParams();
+        if (fileId != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, fileId, 'fileId');
+        }
+
+        let headers: HttpHeaders;
+        if (options?.headers instanceof HttpHeaders) {
+            headers = options.headers;
+        } else {
+            headers = new HttpHeaders(options?.headers);
+        }
+        // Advertise the response content type declared in the spec
+        if (!headers.has('Accept')) {
+            headers = headers.set('Accept', 'application/json');
+        }
+
+        return this.httpClient.request('get', url, {
+            observe,
+            headers,
+            params,
+            reportProgress: options?.reportProgress,
+            withCredentials: options?.withCredentials,
+            context: this.createContextWithClientId(options?.context)
+        });
+    }
+
+    filesByIdDelete(fileId: number | string, observe?: 'body', options?: RequestOptions<'json'>): Observable<any>;
+    filesByIdDelete(fileId: number | string, observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<any>>;
+    filesByIdDelete(fileId: number | string, observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<any>>;
+    filesByIdDelete(fileId: number | string, observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
+        const url = `${this.basePath}/files/by-id`;
+
+        let params = new HttpParams();
+        if (fileId != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, fileId, 'fileId');
+        }
+
+        let headers: HttpHeaders;
+        if (options?.headers instanceof HttpHeaders) {
+            headers = options.headers;
+        } else {
+            headers = new HttpHeaders(options?.headers);
+        }
+
+        return this.httpClient.request('delete', url, {
+            observe,
+            headers,
+            params,
             reportProgress: options?.reportProgress,
             withCredentials: options?.withCredentials,
             context: this.createContextWithClientId(options?.context)
