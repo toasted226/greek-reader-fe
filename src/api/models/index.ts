@@ -35,6 +35,14 @@ export interface ExampleResponse {
     english: string;
 }
 
+export interface FileMetadataResponse {
+    id?: number | string;
+    originalFileName?: string;
+    displayName?: string;
+    fileSizeBytes?: number | string;
+    uploadedAt?: Date;
+}
+
 export interface FormResponse {
     form: string;
     features: Array<string>;
@@ -68,8 +76,12 @@ export interface TokenResponse {
 }
 
 export interface UploadFileResponse {
-    fileName: string;
-    characterCount: number | string;
+    fileId?: number | null | string | null | null;
+    originalFileName?: string;
+    displayName?: string;
+    characterCount?: number | string;
+    fileSizeBytes?: number | string;
+    analysis?: Array<AnalyseResponse>;
 }
 
 export interface UserLemmaResponse {

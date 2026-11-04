@@ -1,16 +1,20 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { AnalyseResponse } from '../../api';
 import { Token } from './token/token';
 import { AnalysisService } from './analysis.service';
 import { PercentPipe } from '@angular/common';
+import { AnalysisLoadingSkeleton } from './analysis-loading-skeleton';
 
 @Component({
-  imports: [Token, PercentPipe],
+  imports: [Token, PercentPipe, AnalysisLoadingSkeleton],
   selector: 'app-analysis',
   styleUrl: './analysis.css',
   templateUrl: './analysis.html',
 })
 export class Analysis {
+  readonly showInput = input<boolean>(true);
+  readonly loading = input<boolean>(false);
+
   protected readonly analysisService = inject(AnalysisService);
 
   readonly inputText = this.analysisService.inputText;

@@ -38,7 +38,7 @@ describe('FileUploadService', () => {
 
   it('should upload a file with credentials and CSRF protection enabled', () => {
     const file = new File(['hello'], 'hello.txt', { type: 'text/plain' });
-    const response: UploadFileResponse = { fileName: 'hello.txt', characterCount: 5 };
+    const response: UploadFileResponse = { originalFileName: 'hello.txt', characterCount: 5 };
     let result: UploadFileResponse | undefined;
 
     service.upload(file).subscribe((value) => {

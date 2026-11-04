@@ -1,0 +1,255 @@
+<div
+  appResizablePanel
+  #resizer="appResizablePanel"
+  class="flex flex-col gap-6 w-full h-full"
+  [class.select-none]="resizer.isDragging()"
+>
+  <!-- Page Header -->
+  <div class="flex flex-col gap-0.5 shrink-0">
+    <h1 class="text-[30px] font-bold leading-9.5 text-text-primary">File Analyser</h1>
+    <span class="text-[15px] leading-5.5 text-text-secondary">Upload and analyse Greek text files to view glosses and inflections</span>
+  </div>
+
+  <!-- Main Content Layout -->
+  <div class="flex flex-col gap-5 flex-1 w-full items-stretch min-h-0">
+
+    <!-- Main Working Area (Upload library OR Analysis view) -->
+    <div class="flex-1 min-w-0 w-full">
+      @if (view() === 'library') {
+        <div class="mx-auto flex w-full max-w-5xl flex-col items-center gap-5">
+          <app-file-upload
+            class="w-full"
+            [compact]="true"
+            [errorMessage]="errorMessage()"
+            [isUploading]="isUploading()"
+            (fileSelected)="onFileUploaded($event)"
+            (validationError)="onUploadError($event)"
+            (errorCleared)="clearError()"
+          />
+
+          <section class="w-full overflow-hidden rounded-[20px] border border-border-default bg-surface-card shadow-xs" aria-labelledby="user-files-heading">
+            <header class="flex items-center justify-between gap-3 border-b border-border-default px-5 py-4">
+              <div class="flex items-center gap-2">
+                <mat-icon aria-hidden="true" class="text-[20px]! text-text-secondary">folder</mat-icon>
+                <h2 id="user-files-heading" class="text-sm font-semibold text-text-primary">Your Files</h2>
+              </div>
+              <span class="rounded-full bg-surface-sunken px-2 py-0.5 text-xs font-medium text-text-secondary">{{ files().length }}</span>
+            </header>
+
+            <ul class="m-0 flex max-h-[calc(100vh-20rem)] list-none flex-col divide-y divide-border-default/60 overflow-y-auto p-0">
+              @if (isLoadingFiles()) {
+                <li class="flex items-center justify-center gap-2 p-8 text-sm text-text-secondary" role="status">
+                  <mat-icon aria-hidden="true" class="size-5! animate-spin text-xl! text-text-secondary/50">progress_activity</mat-icon>
+                  <span>Loading files…</span>
+                </li>
+              } @else if (filesLoadError()) {
+                <li class="flex flex-col items-center gap-2 p-8 text-center text-sm" role="alert">
+                  <mat-icon aria-hidden="true" class="size-8! text-3xl! text-red-400">error_outline</mat-icon>
+                  <p class="font-medium text-text-primary">Could not load files</p>
+                  <p class="text-xs text-text-secondary">{{ filesLoadError() }}</p>
+                </li>
+              } @else if (files().length === 0) {
+                <li class="flex flex-col items-center gap-2 p-8 text-center text-sm text-text-secondary">
+                  <mat-icon aria-hidden="true" class="size-8! text-3xl! text-text-secondary/50">folder_open</mat-icon>
+                  <p>No files uploaded yet.</p>
+                  <p class="text-xs text-text-secondary/80">Upload a plain text file to get started.</p>
+                </li>
+              } @else {
+                @for (file of files(); track file.id) {
+                  <li class="group relative flex items-center gap-2 px-3 py-2" [class.bg-brand-soft]="selectedFile()?.id === file.id">
+                    <span
+                      aria-hidden="true"
+                      class="pointer-events-none absolute inset-y-0 left-0 w-1 origin-bottom scale-y-0 bg-brand-primary transition-transform duration-200 ease-out group-hover:scale-y-100 group-focus-within:scale-y-100"
+                    ></span>
+                    <button
+                      type="button"
+                      (click)="selectFile(file)"
+                      [attr.aria-current]="selectedFile()?.id === file.id ? 'true' : null"
+                      class="flex min-w-0 flex-1 items-center gap-3 rounded-xl p-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                    >
+                      <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand-primary">
+                        <mat-icon aria-hidden="true" class="text-[18px]!">description</mat-icon>
+                      </span>
+                      <span class="min-w-0 flex-1">
+                        <span class="block truncate text-sm font-semibold text-text-primary" [class.text-brand-primary]="selectedFile()?.id === file.id">{{ file.displayName }}</span>
+                        <span class="mt-0.5 block truncate text-xs text-text-secondary">{{ file.originalFileName }}</span>
+                        <span class="mt-1 flex items-center gap-2 text-[11px] text-text-secondary/80">
+                          <span>{{ formatBytes(file.fileSizeBytes) }}</span>
+                          <span aria-hidden="true">•</span>
+                          <span>{{ file.uploadedAt | date:'mediumDate' }}</span>
+                        </span>
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      [attr.aria-label]="'Delete ' + file.displayName"
+                      title="Delete file"
+                      (click)="deleteFile(file, $event)"
+                      class="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-secondary hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                    >
+                      <mat-icon aria-hidden="true" class="text-[18px]!">delete_outline</mat-icon>
+                    </button>
+                  </li>
+                }
+              }
+            </ul>
+          </section>
+        </div>
+      } @else {
+
+        <!-- ACTIVE FILE ANALYSIS & INFO PANEL VIEW -->
+        <section
+          aria-label="Analysis workspace"
+          [style.--infopanel-width.px]="resizer.panelWidth()"
+          class="flex flex-col lg:flex-row gap-4 lg:gap-2 flex-1 w-full items-start"
+        >
+          <!-- Center Analysis Column -->
+          <div class="flex-1 min-w-0 w-full bg-surface-card rounded-[20px] p-5 shadow-xs border border-border-default">
+            <app-analysis [showInput]="false" [loading]="isLoadingAnalysis()">
+                <!-- Active Document Header projected into analysis-header slot -->
+                <div
+                  analysis-header
+                  class="flex flex-wrap items-center justify-between gap-3 w-full pb-3 border-b border-border-default"
+                >
+                  <details #documentMenu class="relative min-w-0">
+                    <summary
+                      class="flex items-center gap-3 min-w-0 cursor-pointer list-none rounded-xl p-1 -ml-1 hover:bg-surface-sunken/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary [&::-webkit-details-marker]:hidden"
+                    >
+                      <span class="size-10 rounded-xl bg-brand-soft text-brand-primary flex items-center justify-center shrink-0">
+                        <mat-icon class="text-[22px]!">description</mat-icon>
+                      </span>
+                      <span class="min-w-0 text-left">
+                        <span class="block text-lg font-bold text-text-primary truncate">
+                          {{ selectedFile()?.displayName }}
+                        </span>
+                        <span class="flex items-center gap-2 text-xs text-text-secondary mt-0.5">
+                          <span class="truncate">{{ selectedFile()?.originalFileName }}</span>
+                          <span aria-hidden="true">•</span>
+                          <span>{{ formatBytes(selectedFile()?.fileSizeBytes ?? 0) }}</span>
+                          <span aria-hidden="true">•</span>
+                          <span>{{ selectedFile()?.uploadedAt | date:'mediumDate' }}</span>
+                        </span>
+                      </span>
+                      <mat-icon aria-hidden="true" class="text-[20px]! text-text-secondary shrink-0">expand_more</mat-icon>
+                    </summary>
+
+                    <div class="absolute left-0 top-full z-30 mt-2 w-[min(22rem,calc(100vw-3rem))] overflow-hidden rounded-2xl border border-border-default bg-surface-card shadow-lg">
+                      <div class="flex items-center justify-between px-4 py-3 border-b border-border-default">
+                        <h3 class="text-sm font-semibold text-text-primary">Your Files</h3>
+                        <span class="text-xs px-2 py-0.5 rounded-full bg-surface-sunken text-text-secondary font-medium">{{ files().length }}</span>
+                      </div>
+                      <ul class="flex flex-col divide-y divide-border-default/60 overflow-y-auto max-h-72 p-0 m-0 list-none">
+                        @if (isLoadingFiles()) {
+                          <li class="p-5 flex items-center gap-2 text-text-secondary text-sm">
+                            <mat-icon class="text-xl! size-5! text-text-secondary/50 animate-spin">progress_activity</mat-icon>
+                            <span>Loading files…</span>
+                          </li>
+                        } @else if (filesLoadError()) {
+                          <li class="p-4 flex items-start gap-2 text-sm text-red-600" role="alert">
+                            <mat-icon class="text-lg! size-5!">error_outline</mat-icon>
+                            <span>{{ filesLoadError() }}</span>
+                          </li>
+                        } @else if (files().length === 0) {
+                          <li class="p-5 text-center text-text-secondary text-sm">No files uploaded yet.</li>
+                        } @else {
+                          @for (file of files(); track file.id) {
+                            <li class="group relative flex items-center gap-2 p-2" [class.bg-brand-soft]="selectedFile()?.id === file.id">
+                              <span
+                                aria-hidden="true"
+                                class="pointer-events-none absolute inset-y-0 left-0 w-1 origin-bottom scale-y-0 bg-brand-primary transition-transform duration-200 ease-out group-hover:scale-y-100 group-focus-within:scale-y-100"
+                              ></span>
+                              <button
+                                type="button"
+                                (click)="selectFileFromMenu(file)"
+                                [attr.aria-current]="selectedFile()?.id === file.id ? 'true' : null"
+                                class="flex items-center gap-2.5 flex-1 min-w-0 rounded-lg p-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                              >
+                                <mat-icon aria-hidden="true" class="text-[18px]! text-brand-primary shrink-0">description</mat-icon>
+                                <span class="min-w-0 flex-1">
+                                  <span class="block text-sm font-medium text-text-primary truncate">{{ file.displayName }}</span>
+                                  <span class="block text-xs text-text-secondary truncate">{{ file.originalFileName }} · {{ formatBytes(file.fileSizeBytes) }}</span>
+                                </span>
+                              </button>
+                              <button
+                                type="button"
+                                [attr.aria-label]="'Delete ' + file.displayName"
+                                title="Delete file"
+                                (click)="deleteFile(file, $event)"
+                                class="size-8 rounded-lg flex items-center justify-center text-text-secondary hover:text-red-600 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary cursor-pointer shrink-0"
+                              >
+                                <mat-icon aria-hidden="true" class="text-[16px]!">delete_outline</mat-icon>
+                              </button>
+                            </li>
+                          }
+                        }
+                      </ul>
+                      <div class="border-t border-border-default p-2">
+                        <button
+                          type="button"
+                          (click)="openLibrary()"
+                          class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold text-brand-primary hover:bg-brand-soft/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                        >
+                          <mat-icon aria-hidden="true" class="text-[18px]!">upload_file</mat-icon>
+                          <span>Upload File</span>
+                        </button>
+                      </div>
+                    </div>
+                  </details>
+
+                  <div class="flex items-center gap-3">
+                    <span class="text-[13px] leading-4.5 text-text-secondary">
+                      {{ analysisService.inflectedCount() }} Inflected, {{ analysisService.unmatchedCount() }} Unmatched, {{ analysisService.coverage() | percent }} Coverage
+                    </span>
+                    <button
+                      type="button"
+                      (click)="deselectFile()"
+                      class="text-xs font-medium text-brand-primary hover:underline cursor-pointer"
+                    >
+                      Close Document
+                    </button>
+                  </div>
+                </div>
+            </app-analysis>
+          </div>
+
+          <!-- Resize Divider Handle -->
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Resize info panel"
+            tabindex="0"
+            [attr.aria-valuenow]="resizer.panelWidth()"
+            [attr.aria-valuemin]="280"
+            [attr.aria-valuemax]="600"
+            (pointerdown)="resizer.onResizeStart($event)"
+            (pointermove)="resizer.onResizeMove($event)"
+            (pointerup)="resizer.onResizeEnd($event)"
+            (pointercancel)="resizer.onResizeEnd($event)"
+            (keydown)="resizer.onKeyDown($event)"
+            class="hidden lg:flex items-center justify-center w-3 self-stretch cursor-col-resize group select-none py-12 shrink-0 touch-none outline-none focus-visible:ring-2 focus-visible:ring-brand-primary rounded"
+          >
+            <div
+              class="w-1 h-8 rounded-full transition-all"
+              [class.bg-brand-primary]="resizer.isDragging()"
+              [class.h-12]="resizer.isDragging()"
+              [class.w-1.5]="resizer.isDragging()"
+              [class.bg-border-default]="!resizer.isDragging()"
+              [class.group-hover:bg-brand-primary]="!resizer.isDragging()"
+              [class.group-hover:h-12]="!resizer.isDragging()"
+            ></div>
+          </div>
+
+          <!-- Info Panel Column -->
+          <div
+            class="w-full lg:w-[var(--infopanel-width)] shrink-0 sticky top-6 lg:top-8 bg-surface-card rounded-[20px] p-5 pb-3.75 shadow-xs border border-border-default max-h-[calc(100vh-6rem)] lg:max-h-[calc(100vh-7rem)] overflow-y-auto"
+          >
+            <app-info-panel />
+          </div>
+
+        </section>
+      }
+
+    </div>
+
+  </div>
+</div>

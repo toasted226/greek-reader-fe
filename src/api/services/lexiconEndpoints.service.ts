@@ -12,7 +12,7 @@ import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from "../tokens";
 import { HttpParamsBuilder } from "../utils/http-params-builder";
-import { RequestOptions, LemmaResponse, AnalyseRequest, AnalyseResponse, UserLemmaResponse, CreateUserLemmaRequest, IFormFile, UploadFileResponse } from "../models";
+import { RequestOptions, LemmaResponse, AnalyseRequest, AnalyseResponse, UserLemmaResponse, CreateUserLemmaRequest, FileMetadataResponse, IFormFile, UploadFileResponse } from "../models";
 
 @Injectable({ providedIn: "root" })
 export class LexiconEndpointsService {
@@ -193,6 +193,32 @@ export class LexiconEndpointsService {
         });
     }
 
+    filesGet(observe?: 'body', options?: RequestOptions<'json'>): Observable<Array<FileMetadataResponse>>;
+    filesGet(observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<Array<FileMetadataResponse>>>;
+    filesGet(observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<Array<FileMetadataResponse>>>;
+    filesGet(observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
+        const url = `${this.basePath}/files`;
+
+        let headers: HttpHeaders;
+        if (options?.headers instanceof HttpHeaders) {
+            headers = options.headers;
+        } else {
+            headers = new HttpHeaders(options?.headers);
+        }
+        // Advertise the response content type declared in the spec
+        if (!headers.has('Accept')) {
+            headers = headers.set('Accept', 'application/json');
+        }
+
+        return this.httpClient.request('get', url, {
+            observe,
+            headers,
+            reportProgress: options?.reportProgress,
+            withCredentials: options?.withCredentials,
+            context: this.createContextWithClientId(options?.context)
+        });
+    }
+
     filesPost(file?: IFormFile, observe?: 'body', options?: RequestOptions<'json'>): Observable<UploadFileResponse>;
     filesPost(file?: IFormFile, observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<UploadFileResponse>>;
     filesPost(file?: IFormFile, observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<UploadFileResponse>>;
@@ -214,11 +240,65 @@ export class LexiconEndpointsService {
 
         const formData = new FormData();
         if (file !== undefined) {
-            formData.append('file', String(file));
+            if (file instanceof File) {
+                formData.append('file', file, file.name);
+            } else if (file instanceof Blob) {
+                formData.append('file', file);
+            } else {
+                formData.append('file', String(file));
+            }
         }
 
         return this.httpClient.request('post', url, {
             body: formData,
+            observe,
+            headers,
+            reportProgress: options?.reportProgress,
+            withCredentials: options?.withCredentials,
+            context: this.createContextWithClientId(options?.context)
+        });
+    }
+
+    filesFileIdGet(fileId: number, observe?: 'body', options?: RequestOptions<'json'>): Observable<UploadFileResponse>;
+    filesFileIdGet(fileId: number, observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<UploadFileResponse>>;
+    filesFileIdGet(fileId: number, observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<UploadFileResponse>>;
+    filesFileIdGet(fileId: number, observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
+        const url = `${this.basePath}/files/${fileId}`;
+
+        let headers: HttpHeaders;
+        if (options?.headers instanceof HttpHeaders) {
+            headers = options.headers;
+        } else {
+            headers = new HttpHeaders(options?.headers);
+        }
+        // Advertise the response content type declared in the spec
+        if (!headers.has('Accept')) {
+            headers = headers.set('Accept', 'application/json');
+        }
+
+        return this.httpClient.request('get', url, {
+            observe,
+            headers,
+            reportProgress: options?.reportProgress,
+            withCredentials: options?.withCredentials,
+            context: this.createContextWithClientId(options?.context)
+        });
+    }
+
+    filesFileIdDelete(fileId: number, observe?: 'body', options?: RequestOptions<'json'>): Observable<any>;
+    filesFileIdDelete(fileId: number, observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<any>>;
+    filesFileIdDelete(fileId: number, observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<any>>;
+    filesFileIdDelete(fileId: number, observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
+        const url = `${this.basePath}/files/${fileId}`;
+
+        let headers: HttpHeaders;
+        if (options?.headers instanceof HttpHeaders) {
+            headers = options.headers;
+        } else {
+            headers = new HttpHeaders(options?.headers);
+        }
+
+        return this.httpClient.request('delete', url, {
             observe,
             headers,
             reportProgress: options?.reportProgress,

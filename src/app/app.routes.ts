@@ -24,6 +24,18 @@ export const routes: Routes = [
           import('./pages/analyse/analyse.component').then((m) => m.AnalyseComponent),
       },
       {
+        path: 'file-analyser',
+        loadComponent: () =>
+          import('./pages/file-analyser/file-analyser.component').then(
+            (m) => m.FileAnalyserComponent,
+          ),
+      },
+      {
+        path: 'files',
+        redirectTo: 'file-analyser',
+        pathMatch: 'full',
+      },
+      {
         path: 'lemmas',
         loadComponent: () =>
           import('./pages/saved-words/saved-words.component').then((m) => m.SavedWordsComponent),
@@ -43,6 +55,11 @@ export const routes: Routes = [
   {
     path: 'analyse',
     redirectTo: 'dashboard/analyse',
+    pathMatch: 'full',
+  },
+  {
+    path: 'file-analyser',
+    redirectTo: 'dashboard/file-analyser',
     pathMatch: 'full',
   },
   {

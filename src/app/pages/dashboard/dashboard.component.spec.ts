@@ -46,9 +46,11 @@ describe('DashboardComponent', () => {
     const navList = compiled.querySelector('mat-nav-list');
     expect(navList).toBeTruthy();
     expect(compiled.textContent).toContain('Text Analyser');
+    expect(compiled.textContent).toContain('File Analyser');
     expect(compiled.textContent).toContain('Saved Words');
     expect(compiled.textContent).toContain('Settings');
     expect(compiled.textContent).toContain('Sign out');
+    expect(compiled.querySelector('a[routerLink="/dashboard/file-analyser"]')).toBeTruthy();
     expect(compiled.querySelector('a[routerLink="/dashboard/lemmas"]')).toBeTruthy();
     expect(compiled.querySelector('a[routerLink="/dashboard/settings"]')).toBeTruthy();
   });

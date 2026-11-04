@@ -1,26 +1,30 @@
 <div class="flex flex-col gap-4">
   <header class="flex justify-between items-center">
-    <h2 class="text-[22px] font-semibold leading-7.5 text-text-primary">Analysed</h2>
-    @if (tokens()) {
-      <div class="flex items-center gap-3">
-        <span class="text-[13px] leading-4.5 text-text-secondary">{{ inflectedCount() }} Inflected, {{ unmatchedCount() }} Unmatched, {{ coverage() | percent }} Coverage</span>
-        <button
-          type="button"
-          (click)="clearAnalysis()"
-          class="text-xs font-medium text-brand-primary hover:underline cursor-pointer"
-        >
-          Edit text
-        </button>
-      </div>
-    } @else {
-      <span class="text-[13px] leading-4.5 text-text-secondary">You'll see coverage information here</span>
-    }
+    <ng-content select="[analysis-header]">
+      <h2 class="text-[22px] font-semibold leading-7.5 text-text-primary">Analysed</h2>
+      @if (tokens()) {
+        <div class="flex items-center gap-3">
+          <span class="text-[13px] leading-4.5 text-text-secondary">{{ inflectedCount() }} Inflected, {{ unmatchedCount() }} Unmatched, {{ coverage() | percent }} Coverage</span>
+          <button
+            type="button"
+            (click)="clearAnalysis()"
+            class="text-xs font-medium text-brand-primary hover:underline cursor-pointer"
+          >
+            Edit text
+          </button>
+        </div>
+      } @else {
+        <span class="text-[13px] leading-4.5 text-text-secondary">You'll see coverage information here</span>
+      }
+    </ng-content>
   </header>
 
-  @if (tokens(); as tokenList) {
+  @if (loading()) {
+    <app-analysis-loading-skeleton />
+  } @else if (tokens(); as tokenList) {
     <div
       data-testid="token-container"
-      class="w-full rounded-xl border border-border-default bg-surface-card p-6 text-2xl leading-relaxed text-text-primary whitespace-pre-wrap select-text"
+      class="w-full rounded-xl border border-border-default bg-surface-card p-6 text-left text-2xl leading-relaxed text-text-primary whitespace-pre-wrap select-text"
     >
       @for (item of tokenList; track $index) {
         <app-token
@@ -30,7 +34,7 @@
         />
       }
     </div>
-  } @else {
+  } @else if (showInput()) {
     <div class="flex flex-col gap-3 w-full">
       <textarea
         class="w-full min-h-40 rounded-xl border border-border-default bg-surface-card p-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/50 resize-y text-base disabled:opacity-60"
@@ -59,6 +63,9 @@
           <span>Analyse</span>
         }
       </button>
+      @if (isLoading()) {
+        <app-analysis-loading-skeleton />
+      }
     </div>
   }
 </div>

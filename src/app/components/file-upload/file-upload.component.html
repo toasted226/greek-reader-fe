@@ -1,0 +1,152 @@
+<div class="flex flex-col w-full" [class.items-center]="!compact()" [class.gap-6]="!compact()" [class.py-4]="!compact()" [class.gap-4]="compact()">
+  <!-- Error Alert Banner -->
+  @if (errorMessage()) {
+    <div
+      class="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 w-full shadow-xs"
+      [class.max-w-2xl]="!compact()"
+      role="alert"
+    >
+      <mat-icon class="shrink-0 text-red-600 mt-0.5">error_outline</mat-icon>
+      <div class="flex-1 min-w-0">
+        <p class="font-semibold text-sm">File upload issue</p>
+        <p class="mt-0.5 text-xs text-red-600 leading-relaxed">{{ errorMessage() }}</p>
+      </div>
+      <button
+        type="button"
+        (click)="clearError()"
+        aria-label="Dismiss error"
+        class="size-6 rounded-md flex items-center justify-center text-red-400 hover:text-red-700 hover:bg-red-100 transition-colors cursor-pointer"
+      >
+        <mat-icon class="text-[18px]!">close</mat-icon>
+      </button>
+    </div>
+  }
+
+  @if (compact()) {
+    <div
+      class="flex flex-row items-center gap-3 sm:gap-5 w-full rounded-2xl border-2 border-dashed border-border-default bg-surface-card px-3 py-4 sm:px-4 sm:py-5 shadow-xs transition-colors hover:border-brand-primary"
+      [class.border-brand-primary]="isDragOver()"
+      [class.bg-brand-soft]="isDragOver()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+    >
+      <input
+        #fileInput
+        type="file"
+        class="hidden"
+        aria-label="Select Greek text file"
+        [accept]="acceptedExtensions().join(',')"
+        (change)="onFileSelected($event)"
+      />
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-medium text-text-primary">
+          Choose a file to analyse, or drag it here.
+        </p>
+        <p class="text-xs text-text-secondary mt-0.5">
+          Plain text ({{ acceptedExtensions().join(', ') }}), UTF-8, up to {{ formatBytes(maxFileBytes()) }}.
+        </p>
+      </div>
+      <button
+        type="button"
+        (click)="openFilePicker()"
+        [disabled]="isUploading()"
+        class="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-brand-primary px-4 sm:px-5 text-sm font-semibold text-text-on-brand shadow-sm transition-colors hover:bg-brand-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 cursor-pointer disabled:opacity-50 ml-auto"
+      >
+        <mat-icon class="text-[18px]!">folder_open</mat-icon>
+        <span>{{ isUploading() ? 'Uploading...' : 'Upload File' }}</span>
+      </button>
+    </div>
+  } @else {
+  <!-- Spacious Drag & Drop Upload Card -->
+  <div
+    class="relative flex flex-col items-center justify-center w-full max-w-2xl rounded-3xl border-2 border-dashed border-border-default hover:border-brand-primary bg-surface-card p-10 sm:p-14 transition-all duration-200 text-center shadow-xs"
+    [class.border-brand-primary]="isDragOver()"
+    [class.bg-brand-soft]="isDragOver()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+  >
+    <div
+      class="flex size-18 items-center justify-center rounded-2xl bg-brand-soft text-brand-primary mb-5 shadow-xs"
+    >
+      <mat-icon class="text-4xl! size-10! flex items-center justify-center">cloud_upload</mat-icon>
+    </div>
+
+    <h2 class="text-xl sm:text-2xl font-bold text-text-primary tracking-tight">
+      Upload your Greek text file
+    </h2>
+    <p class="mt-2 text-sm text-text-secondary max-w-md leading-relaxed">
+      Drag and drop your file here to immediately parse and analyse vocabulary, grammar, and inflections.
+    </p>
+
+    <!-- Explicit File Selector Button -->
+    <div class="mt-7 flex flex-col sm:flex-row items-center gap-3">
+      <input
+        #fileInput
+        type="file"
+        class="hidden"
+        aria-label="Select Greek text file"
+        [accept]="acceptedExtensions().join(',')"
+        (change)="onFileSelected($event)"
+      />
+      <button
+        type="button"
+        (click)="openFilePicker()"
+        [disabled]="isUploading()"
+        class="inline-flex h-12 items-center justify-center gap-2.5 rounded-xl bg-brand-primary px-7 text-sm font-semibold text-text-on-brand shadow-sm transition-all hover:bg-brand-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 cursor-pointer active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <mat-icon class="text-[20px]!">folder_open</mat-icon>
+        <span>{{ isUploading() ? 'Uploading...' : 'Select file to upload' }}</span>
+      </button>
+    </div>
+
+    <!-- Format Specifications & Constraints -->
+    <div
+      class="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-text-secondary border-t border-border-default/60 pt-5 w-full"
+    >
+      <span class="flex items-center gap-1.5">
+        <mat-icon class="text-[14px]! size-3.5! text-brand-primary">check_circle</mat-icon>
+        Plain text ({{ acceptedExtensions().join(', ') }})
+      </span>
+      <span>•</span>
+      <span class="flex items-center gap-1.5">
+        <mat-icon class="text-[14px]! size-3.5! text-brand-primary">check_circle</mat-icon>
+        UTF-8 encoding
+      </span>
+      <span>•</span>
+      <span class="flex items-center gap-1.5">
+        <mat-icon class="text-[14px]! size-3.5! text-brand-primary">check_circle</mat-icon>
+        Maximum size {{ formatBytes(maxFileBytes()) }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Quick Tip / Helper Feature Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl">
+    <div class="p-4 rounded-2xl bg-surface-card border border-border-default shadow-xs flex items-start gap-3">
+      <div class="size-9 rounded-xl bg-brand-soft text-brand-primary flex items-center justify-center shrink-0">
+        <mat-icon class="text-[20px]!">auto_stories</mat-icon>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold text-text-primary">Instant Greek Analysis</h3>
+        <p class="text-xs text-text-secondary mt-1 leading-relaxed">
+          Normalized with full diacritics and broken down into clickable words, lemmas, and forms.
+        </p>
+      </div>
+    </div>
+
+    <div class="p-4 rounded-2xl bg-surface-card border border-border-default shadow-xs flex items-start gap-3">
+      <div class="size-9 rounded-xl bg-brand-soft text-brand-primary flex items-center justify-center shrink-0">
+        <mat-icon class="text-[20px]!">history</mat-icon>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold text-text-primary">Saved in Your Library</h3>
+        <p class="text-xs text-text-secondary mt-1 leading-relaxed">
+          Your uploaded texts are securely saved and can be reopened anytime from your file list.
+        </p>
+      </div>
+    </div>
+  </div>
+  }
+</div>
