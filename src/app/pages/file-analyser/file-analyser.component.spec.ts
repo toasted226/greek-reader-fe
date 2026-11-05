@@ -4,11 +4,13 @@ import { of, throwError } from 'rxjs';
 import { FileAnalyserComponent, FileItem } from './file-analyser.component';
 import { BASE_PATH_DEFAULT, LexiconEndpointsService, UploadFileResponse } from '../../../api';
 import { AuthService } from '../../auth/auth.service';
+import { FileUploadService } from '../../analysis/file-upload.service';
 
 describe('FileAnalyserComponent', () => {
   let component: FileAnalyserComponent;
   let fixture: ComponentFixture<FileAnalyserComponent>;
   let lexiconService: LexiconEndpointsService;
+  let fileUploadService: FileUploadService;
   let authServiceMock: { fetchCsrfToken: ReturnType<typeof vi.fn> };
 
   const analysisResponse: UploadFileResponse = {
@@ -48,10 +50,12 @@ describe('FileAnalyserComponent', () => {
         provideHttpClient(),
         { provide: BASE_PATH_DEFAULT, useValue: 'http://localhost:3000' },
         { provide: AuthService, useValue: authServiceMock },
+        { provide: FileUploadService, useValue: { upload: vi.fn().mockReturnValue(of(analysisResponse)) } },
       ],
     }).compileComponents();
 
     lexiconService = TestBed.inject(LexiconEndpointsService);
+    fileUploadService = TestBed.inject(FileUploadService);
     vi.spyOn(lexiconService, 'filesGet').mockReturnValue(of([]) as any);
 
     fixture = TestBed.createComponent(FileAnalyserComponent);
@@ -181,17 +185,12 @@ describe('FileAnalyserComponent', () => {
       fileSizeBytes: 5,
       characterCount: 5,
     };
-    vi.spyOn(lexiconService, 'filesPost').mockReturnValue(of(response) as any);
+    vi.spyOn(fileUploadService, 'upload').mockReturnValue(of(response));
 
     component.onFileUploaded(file);
     fixture.detectChanges();
 
-    expect(authServiceMock.fetchCsrfToken).toHaveBeenCalledWith(true);
-    expect(lexiconService.filesPost).toHaveBeenCalledWith(
-      file,
-      'body',
-      expect.objectContaining({ withCredentials: true }),
-    );
+    expect(fileUploadService.upload).toHaveBeenCalledWith(file);
     expect(component.view()).toBe('analysis');
     expect(component.files()).toHaveLength(1);
     expect(component.selectedFile()?.displayName).toBe('Sample Document');
@@ -204,8 +203,8 @@ describe('FileAnalyserComponent', () => {
 
   it('should keep the library visible and show a friendly error when upload fails', () => {
     const file = new File(['test'], 'test.txt', { type: 'text/plain' });
-    vi.spyOn(lexiconService, 'filesPost').mockReturnValue(
-      throwError(() => ({ status: 413, message: 'Payload Too Large' })) as any,
+    vi.spyOn(fileUploadService, 'upload').mockReturnValue(
+      throwError(() => ({ status: 413, error: { code: 'file_too_large' } })),
     );
 
     component.onFileUploaded(file);

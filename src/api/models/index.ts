@@ -65,6 +65,14 @@ export interface MeResponse {
     createdAt: Date | null;
 }
 
+export interface ProblemDetails {
+    type?: string | null;
+    title?: string | null;
+    status?: number | null | string | null | null;
+    detail?: string | null;
+    instance?: string | null;
+}
+
 export interface SignInRequest {
     email: string;
 }

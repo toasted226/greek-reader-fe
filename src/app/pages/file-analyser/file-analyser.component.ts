@@ -5,6 +5,7 @@ import { switchMap } from 'rxjs';
 import { InfoPanel } from '../../analysis/info-panel/info-panel';
 import { Analysis } from '../../analysis/analysis';
 import { AnalysisService } from '../../analysis/analysis.service';
+import { FileUploadService } from '../../analysis/file-upload.service';
 import { FileUploadComponent } from '../../components/file-upload/file-upload.component';
 import { FileMetadataResponse, LexiconEndpointsService, UploadFileResponse } from '../../../api';
 import { AuthService } from '../../auth/auth.service';
@@ -43,6 +44,7 @@ type FileAnalyserView = 'library' | 'analysis';
 export class FileAnalyserComponent implements OnInit {
   readonly analysisService = inject(AnalysisService);
   private readonly lexiconEndpointsService = inject(LexiconEndpointsService);
+  private readonly fileUploadService = inject(FileUploadService);
   private readonly authService = inject(AuthService);
 
   // Page view is independent of the selected file so the library can be opened
@@ -154,16 +156,8 @@ export class FileAnalyserComponent implements OnInit {
     this.isUploading.set(true);
     this.errorMessage.set(null);
 
-    this.authService
-      .fetchCsrfToken(true)
-      .pipe(
-        switchMap(() =>
-          this.lexiconEndpointsService.filesPost(file, 'body', {
-            withCredentials: true,
-            context: withCsrfProtection(),
-          }),
-        ),
-      )
+    this.fileUploadService
+      .upload(file)
       .subscribe({
         next: (response: UploadFileResponse) => {
           this.isUploading.set(false);
