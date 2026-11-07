@@ -2,7 +2,7 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "bun"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -28,7 +28,13 @@
             "server": "src/main.server.ts",
             "outputMode": "server",
             "security": {
-              "allowedHosts": ["localhost", "localhost:4000", "127.0.0.1", "127.0.0.1:4000"]
+              "allowedHosts": [
+                "localhost",
+                "localhost:4000",
+                "127.0.0.1",
+                "127.0.0.1:4000",
+                "greek-reader.modulrza.app"
+              ]
             },
             "ssr": {
               "entry": "src/server.ts"

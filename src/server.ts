@@ -12,6 +12,17 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
+/** Expose only the public API URL needed by the browser application. */
+app.get('/runtime-config.js', (_req, res) => {
+  const apiBaseUrl = (process.env['API_BASE_URL'] ?? 'http://localhost:3000').replace(/\/+$/, '');
+  const config = JSON.stringify({ apiBaseUrl }).replace(/</g, '\\u003c');
+
+  res
+    .set('Cache-Control', 'no-store')
+    .type('application/javascript')
+    .send(`window.__GREEK_READER_CONFIG__ = ${config};`);
+});
+
 /**
  * Example Express Rest API endpoints can be defined here.
  * Uncomment and define endpoints as necessary.

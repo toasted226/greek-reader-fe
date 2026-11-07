@@ -1,0 +1,12 @@
+.git
+.angular
+coverage
+dist
+node_modules
+out-tsc
+package-lock.json
+.env
+.env.*
+!.env.example
+npm-debug.log
+bun-debug.log

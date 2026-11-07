@@ -7,10 +7,23 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { CredentialsInterceptor } from './auth/credentials.interceptor';
 import { CsrfInterceptor } from './auth/csrf.interceptor';
 
+declare global {
+  interface Window {
+    __GREEK_READER_CONFIG__?: {
+      apiBaseUrl?: string;
+    };
+  }
+}
+
+const apiBaseUrl =
+  typeof window !== 'undefined'
+    ? (window.__GREEK_READER_CONFIG__?.apiBaseUrl ?? 'http://localhost:3000')
+    : 'http://localhost:3000';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
-    provideDefaultClient({ basePath: 'http://localhost:3000' }),
+    provideDefaultClient({ basePath: apiBaseUrl }),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: CredentialsInterceptor,
