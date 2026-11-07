@@ -1,23 +1,26 @@
-# Build the Angular browser bundle and SSR server with the project's Bun lockfile.
-FROM oven/bun:1.4.2 AS build
+# 1. Build Stage: Node 22 base with Bun copied in
+FROM node:22-bookworm-slim AS build
 WORKDIR /app
 
+# Copy the Bun CLI from the official image
+COPY --from=oven/bun:1.4.2 /usr/local/bin/bun /usr/local/bin/bun
+
+# Install dependencies using Bun and bun.lock
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
+# Copy app source and build using Node (which supports Angular's memory: SSR loader)
 COPY . .
-RUN bun run build
+RUN node ./node_modules/@angular/cli/bin/ng.js build
 
-# Install only runtime dependencies on the same Debian base as the final Node image.
-FROM oven/bun:1.4.2 AS bun
-
+# 2. Production Dependencies Stage
 FROM node:22-bookworm-slim AS prod-deps
 WORKDIR /app
-COPY --from=bun /usr/local/bin/bun /usr/local/bin/bun
+COPY --from=oven/bun:1.4.2 /usr/local/bin/bun /usr/local/bin/bun
 COPY package.json bun.lock ./
 RUN bun install --production --frozen-lockfile
 
-# Run the Angular SSR server with Node; Bun is only used for package management/builds.
+# 3. Production Runtime Stage
 FROM node:22-bookworm-slim AS runtime
 ENV NODE_ENV=production \
     PORT=4000 \
