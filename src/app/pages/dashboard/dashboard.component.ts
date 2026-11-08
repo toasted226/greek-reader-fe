@@ -23,7 +23,6 @@ import { AuthService } from '../../auth/auth.service';
     ScrollToTop,
   ],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css',
   host: {
     class: 'block h-full w-full',
   },

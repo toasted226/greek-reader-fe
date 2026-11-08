@@ -13,6 +13,7 @@ import { AnalysisLoadingSkeleton } from './analysis-loading-skeleton';
 })
 export class Analysis {
   readonly showInput = input<boolean>(true);
+  readonly showEditText = input<boolean>(true);
   readonly loading = input<boolean>(false);
 
   protected readonly analysisService = inject(AnalysisService);

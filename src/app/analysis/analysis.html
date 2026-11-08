@@ -4,14 +4,7 @@
       <h2 class="text-[22px] font-semibold leading-7.5 text-text-primary">Analysed</h2>
       @if (tokens()) {
         <div class="flex items-center gap-3">
-          <span class="text-[13px] leading-4.5 text-text-secondary">{{ inflectedCount() }} Inflected, {{ unmatchedCount() }} Unmatched, {{ coverage() | percent }} Coverage</span>
-          <button
-            type="button"
-            (click)="clearAnalysis()"
-            class="text-xs font-medium text-brand-primary hover:underline cursor-pointer"
-          >
-            Edit text
-          </button>
+          <span class="sm:text-[13px] text-[11px] leading-4.5 text-text-secondary">{{ inflectedCount() }} Inflected, {{ unmatchedCount() }} Unmatched, {{ coverage() | percent }} Coverage</span>
         </div>
       } @else {
         <span class="text-[13px] leading-4.5 text-text-secondary">You'll see coverage information here</span>
@@ -34,6 +27,15 @@
         />
       }
     </div>
+    @if (showEditText()) {
+      <button
+        type="button"
+        (click)="clearAnalysis()"
+        class="w-full py-2.5 px-4 rounded-xl bg-brand-primary hover:bg-brand-primary/90 text-text-on-brand font-medium text-sm transition-colors flex items-center justify-center shadow-xs gap-2"
+      >
+        Edit text
+      </button>
+    }
   } @else if (showInput()) {
     <div class="flex flex-col gap-3 w-full">
       <textarea

@@ -4,7 +4,20 @@
       <span class="text-brand-primary font-bold text-2xl leading-none">Ω</span>
       <span class="font-bold text-xl tracking-tight">Greek Reader</span>
     </div>
+    <button
+      mat-icon-button
+      type="button"
+      aria-label="Sign out"
+      class="ml-auto md:hidden"
+      (click)="signOut()"
+      [disabled]="isSigningOut()"
+    >
+      <mat-icon>logout</mat-icon>
+    </button>
   </mat-toolbar>
+  @if (signOutError()) {
+    <p class="bg-surface-card px-4 py-2 text-xs text-red-700 md:hidden" role="alert">{{ signOutError() }}</p>
+  }
 
   <mat-sidenav-container class="flex-1 w-full bg-transparent!">
     <!-- Side navigation content -->
@@ -12,7 +25,7 @@
       #sidenav
       mode="side"
       opened="true"
-      class="group w-60! border-r! border-border-default! bg-surface-card! overflow-x-hidden transition-[width] duration-300 ease-in-out shadow-xs"
+      class="group hidden! w-60! border-r! border-border-default! bg-surface-card! overflow-x-hidden transition-[width] duration-300 ease-in-out shadow-xs md:block!"
     >
       <div class="flex h-full flex-col">
         <mat-nav-list class="py-2">
@@ -59,6 +72,60 @@
       </main>
     </mat-sidenav-content>
   </mat-sidenav-container>
+
+  <nav
+    aria-label="Main navigation"
+    class="mobile-bottom-nav flex shrink-0 justify-around border-t border-border-default bg-surface-card px-2 pt-1 pb-[calc(0.25rem_+_env(safe-area-inset-bottom))] shadow-lg md:hidden"
+  >
+    <a
+      mat-button
+      routerLink="/dashboard/analyse"
+      routerLinkActive="bg-brand-soft!"
+      ariaCurrentWhenActive="page"
+      class="group min-h-[3.75rem] min-w-0 flex-1 rounded-xl px-0.5 py-1 leading-none !text-text-primary hover:bg-surface-sunken"
+    >
+      <span class="flex w-full flex-col items-center justify-center gap-0.5">
+        <mat-icon class="!m-0 !size-6 !self-center !text-xl !text-text-primary group-aria-[current=page]:!text-brand-primary">menu_book</mat-icon>
+        <span class="!mt-1 !text-text-primary text-[0.6875rem] font-medium leading-4">Analyse</span>
+      </span>
+    </a>
+    <a
+      mat-button
+      routerLink="/dashboard/file-analyser"
+      routerLinkActive="bg-brand-soft!"
+      ariaCurrentWhenActive="page"
+      class="group min-h-[3.75rem] min-w-0 flex-1 rounded-xl px-0.5 py-1 leading-none !text-text-primary hover:bg-surface-sunken"
+    >
+      <span class="flex w-full flex-col items-center justify-center gap-0.5">
+        <mat-icon class="!m-0 !size-6 !self-center !text-xl !text-text-primary group-aria-[current=page]:!text-brand-primary">upload_file</mat-icon>
+        <span class="!mt-1 !text-text-primary text-[0.6875rem] font-medium leading-4">Files</span>
+      </span>
+    </a>
+    <a
+      mat-button
+      routerLink="/dashboard/lemmas"
+      routerLinkActive="bg-brand-soft!"
+      ariaCurrentWhenActive="page"
+      class="group min-h-[3.75rem] min-w-0 flex-1 rounded-xl px-0.5 py-1 leading-none !text-text-primary hover:bg-surface-sunken"
+    >
+      <span class="flex w-full flex-col items-center justify-center gap-0.5">
+        <mat-icon class="!m-0 !size-6 !self-center !text-xl !text-text-primary group-aria-[current=page]:!text-brand-primary">bookmark</mat-icon>
+        <span class="!mt-1 !text-text-primary text-[0.6875rem] font-medium leading-4">Saved</span>
+      </span>
+    </a>
+    <a
+      mat-button
+      routerLink="/dashboard/settings"
+      routerLinkActive="bg-brand-soft!"
+      ariaCurrentWhenActive="page"
+      class="group min-h-[3.75rem] min-w-0 flex-1 rounded-xl px-0.5 py-1 leading-none !text-text-primary hover:bg-surface-sunken"
+    >
+      <span class="flex w-full flex-col items-center justify-center gap-0.5">
+        <mat-icon class="!m-0 !size-6 !self-center !text-xl !text-text-primary group-aria-[current=page]:!text-brand-primary">settings</mat-icon>
+        <span class="!mt-1 !text-text-primary text-[0.6875rem] font-medium leading-4">Settings</span>
+      </span>
+    </a>
+  </nav>
 
   <app-scroll-to-top [target]="sidenavContent" />
 </div>

@@ -126,6 +126,18 @@ describe('Analysis', () => {
     expect(compiled.textContent).toContain('100% Coverage');
   });
 
+  it('should hide the edit text button when showEditText is false', async () => {
+    fixture.componentRef.setInput('showEditText', false);
+    component.inputText.set('Καλημέρα!');
+    component.analyseText();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('[data-testid="token-container"]')).toBeTruthy();
+    expect(compiled.textContent).not.toContain('Edit text');
+  });
+
   it('should allow selecting a different word token and clearing analysis back to text input', async () => {
     const multiTokens: AnalyseResponse[] = [
       {
@@ -159,8 +171,12 @@ describe('Analysis', () => {
 
     expect(component.selectedToken()).toEqual(multiTokens[2]);
 
-    const editButton = compiled.querySelector('header button') as HTMLButtonElement;
+    const tokenContainer = compiled.querySelector('[data-testid="token-container"]') as HTMLElement;
+    const editButton = tokenContainer.nextElementSibling as HTMLButtonElement;
     expect(editButton?.textContent?.trim()).toBe('Edit text');
+    expect(editButton.classList).toContain('w-full');
+    expect(editButton.classList).toContain('justify-center');
+    expect(editButton.classList).toContain('bg-brand-primary');
 
     editButton.click();
     fixture.detectChanges();

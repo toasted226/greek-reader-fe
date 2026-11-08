@@ -54,4 +54,20 @@ describe('DashboardComponent', () => {
     expect(compiled.querySelector('a[routerLink="/dashboard/lemmas"]')).toBeTruthy();
     expect(compiled.querySelector('a[routerLink="/dashboard/settings"]')).toBeTruthy();
   });
+
+  it('should render a mobile bottom navigation with short labels', () => {
+    const fixture = TestBed.createComponent(DashboardComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const mobileNav = compiled.querySelector('.mobile-bottom-nav');
+
+    expect(mobileNav?.getAttribute('aria-label')).toBe('Main navigation');
+    expect(mobileNav?.textContent).toContain('Analyse');
+    expect(mobileNav?.textContent).toContain('Files');
+    expect(mobileNav?.textContent).toContain('Saved');
+    expect(mobileNav?.textContent).toContain('Settings');
+    expect(mobileNav?.querySelector('a[routerLink="/dashboard/file-analyser"]')).toBeTruthy();
+    expect(mobileNav?.querySelector('a[routerLink="/dashboard/lemmas"]')).toBeTruthy();
+    expect(mobileNav?.querySelector('a[routerLink="/dashboard/settings"]')).toBeTruthy();
+  });
 });
