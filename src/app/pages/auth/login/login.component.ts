@@ -1,10 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthEndpointsService } from '../../../../api';
 
 @Component({
   selector: 'app-login',
-  imports: [MatProgressSpinnerModule],
+  imports: [RouterLink, MatProgressSpinnerModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   host: {

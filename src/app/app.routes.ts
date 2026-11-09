@@ -53,6 +53,11 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'privacy',
+    loadComponent: () =>
+      import('./pages/privacy/privacy.component').then((m) => m.PrivacyComponent),
+  },
+  {
     path: 'analyse',
     redirectTo: 'dashboard/analyse',
     pathMatch: 'full',

@@ -47,6 +47,12 @@
             <span>Sign in</span>
           }
         </button>
+
+        <p class="text-xs text-text-secondary text-center">
+          We <b>only</b> use your email for authentication purposes.<br>
+          By signing in you agree to our
+          <a routerLink="/privacy" class="text-brand-primary hover:underline font-medium">Privacy Policy</a>.
+        </p>
       </form>
 
       @if (successMessage()) {
