@@ -1,0 +1,260 @@
+<div class="flex flex-col gap-3 rounded-xl border border-border-default bg-surface-card p-4">
+
+  <!-- Primary filter row -->
+  <div class="flex flex-wrap items-end gap-3">
+
+    <!-- Lemma search -->
+    <div class="flex min-w-36 flex-1 flex-col gap-1">
+      <label
+        for="filter-lemma"
+        class="text-xs font-medium text-text-secondary"
+      >
+        Lemma
+      </label>
+      <div class="relative">
+        <svg
+          aria-hidden="true"
+          class="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-text-secondary"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <input
+          id="filter-lemma"
+          type="search"
+          class="w-full rounded-lg border border-border-default bg-surface-page py-1.5 pl-8 pr-3 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          placeholder="Search headword…"
+          [value]="filterService.lemmaSearch()"
+          (input)="onLemmaInput($any($event.target).value)"
+          aria-label="Filter by lemma headword"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+        />
+      </div>
+    </div>
+
+    <!-- Form search -->
+    <div class="flex min-w-36 flex-1 flex-col gap-1">
+      <label
+        for="filter-form"
+        class="text-xs font-medium text-text-secondary"
+      >
+        Inflected form
+      </label>
+      <div class="relative">
+        <svg
+          aria-hidden="true"
+          class="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-text-secondary"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <input
+          id="filter-form"
+          type="search"
+          class="w-full rounded-lg border border-border-default bg-surface-page py-1.5 pl-8 pr-3 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          placeholder="Search inflected form…"
+          [value]="filterService.formSearch()"
+          (input)="onFormInput($any($event.target).value)"
+          aria-label="Filter by inflected form"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+        />
+      </div>
+    </div>
+
+    <!-- Part of speech select -->
+    <div class="flex min-w-36 flex-col gap-1">
+      <label
+        for="filter-pos"
+        class="text-xs font-medium text-text-secondary"
+      >
+        Part of speech
+      </label>
+      <select
+        id="filter-pos"
+        class="filter-select rounded-lg border border-border-default bg-surface-page py-1.5 pl-3 pr-8 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        [value]="filterService.partOfSpeech() ?? ''"
+        (change)="onPosChange($any($event.target).value)"
+        aria-label="Filter by part of speech"
+      >
+        <option value="">All parts of speech</option>
+        @for (pos of posValues; track pos) {
+          <option [value]="pos">{{ posLabels[pos] ?? pos }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Latest only toggle -->
+    <label
+      class="flex cursor-pointer select-none items-center gap-2 self-end pb-1.5 text-sm text-text-primary"
+    >
+      <span class="relative inline-flex items-center">
+        <input
+          type="checkbox"
+          class="peer sr-only"
+          [checked]="filterService.latest()"
+          (change)="onLatestChange($any($event.target).checked)"
+        />
+        <!-- Track -->
+        <span
+          class="h-5 w-9 rounded-full border border-border-default bg-surface-sunken transition-colors peer-checked:border-brand-primary peer-checked:bg-brand-primary peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-blue-600"
+        ></span>
+        <!-- Thumb -->
+        <span
+          class="absolute left-0.5 top-0.5 size-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-4"
+        ></span>
+      </span>
+      Latest only
+    </label>
+
+    <!-- More filters toggle -->
+    <button
+      type="button"
+      class="flex items-center gap-1.5 self-end pb-1.5 text-sm font-medium text-brand-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+      (click)="showMore.set(!showMore())"
+      [attr.aria-expanded]="showMore()"
+      aria-controls="filter-more"
+    >
+      {{ showMore() ? 'Fewer filters' : 'More filters' }}
+      <svg
+        aria-hidden="true"
+        class="size-4 transition-transform duration-200"
+        [class.rotate-180]="showMore()"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </button>
+
+  </div><!-- /primary row -->
+
+  <!-- Secondary "more filters" section -->
+  @if (showMore()) {
+    <div
+      id="filter-more"
+      class="flex flex-col gap-4 border-t border-border-default pt-3"
+      aria-label="Additional filters"
+    >
+
+      <!-- Date range -->
+      <div class="flex flex-wrap items-end gap-3">
+        <div class="flex flex-col gap-1">
+          <label for="filter-min-date" class="text-xs font-medium text-text-secondary">
+            Saved from
+          </label>
+          <input
+            id="filter-min-date"
+            type="date"
+            class="rounded-lg border border-border-default bg-surface-page px-3 py-1.5 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            [value]="dateToInputValue(filterService.minDate())"
+            (change)="onMinDateChange($any($event.target).value)"
+            aria-label="Saved from date"
+          />
+        </div>
+        <span class="self-end pb-2 text-sm text-text-secondary">to</span>
+        <div class="flex flex-col gap-1">
+          <label for="filter-max-date" class="text-xs font-medium text-text-secondary">
+            Saved to
+          </label>
+          <input
+            id="filter-max-date"
+            type="date"
+            class="rounded-lg border border-border-default bg-surface-page px-3 py-1.5 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            [value]="dateToInputValue(filterService.maxDate())"
+            (change)="onMaxDateChange($any($event.target).value)"
+            aria-label="Saved to date"
+          />
+        </div>
+      </div>
+
+      <!-- Feature chips -->
+      <div class="flex flex-col gap-2">
+        <span class="text-xs font-medium text-text-secondary">
+          Morphological features
+          @if (filterService.partOfSpeech()) {
+            <span class="ml-1 font-normal">
+              — greyed-out features do not apply to
+              <strong class="font-medium">{{ posLabels[filterService.partOfSpeech()!] ?? filterService.partOfSpeech() }}</strong>
+            </span>
+          }
+        </span>
+        <div
+          class="flex flex-wrap gap-1.5"
+          role="group"
+          aria-label="Morphological feature filters"
+          [attr.aria-busy]="filterService.featuresLoading()"
+        >
+          @if (filterService.featuresLoading() && filterService.availableFeatures().length === 0) {
+            <span class="text-xs text-text-secondary">Loading features…</span>
+          }
+          @for (feature of filterService.availableFeatures(); track feature.key) {
+            <button
+              type="button"
+              class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              [ngClass]="featureChipClasses(feature.key, feature.enabled ?? true)"
+              [disabled]="!feature.enabled"
+              [attr.aria-pressed]="filterService.selectedFeatures().includes(feature.key)"
+              [attr.aria-disabled]="!feature.enabled"
+              (click)="onFeatureToggle(feature.key, feature.enabled ?? true)"
+            >
+              {{ feature.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Example / context sentence search -->
+      <div class="flex flex-col gap-1">
+        <label for="filter-example" class="text-xs font-medium text-text-secondary">
+          Context sentence
+        </label>
+        <div class="relative">
+          <svg
+            aria-hidden="true"
+            class="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-text-secondary"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <input
+            id="filter-example"
+            type="search"
+            class="w-full rounded-lg border border-border-default bg-surface-page py-1.5 pl-8 pr-3 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            placeholder="Search within saved context sentences…"
+            [value]="filterService.exampleSearch()"
+            (input)="onExampleInput($any($event.target).value)"
+            aria-label="Filter by context sentence text"
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
+          />
+        </div>
+      </div>
+
+    </div><!-- /more filters -->
+  }
+
+</div>

@@ -4,22 +4,65 @@
     <p class="text-[15px] leading-5.5 text-text-secondary">Your saved Greek lemmas</p>
   </header>
 
-  @if (savedLemmasService.loading()) {
+  <app-saved-words-filter />
+
+  <!-- Active filter summary bar -->
+  @if (filterService.hasActiveFilters()) {
+    <div
+      class="flex flex-wrap items-center gap-2"
+      role="status"
+      aria-live="polite"
+      aria-label="Active filters"
+    >
+      <span class="text-sm text-text-secondary">Filters:</span>
+
+      @for (pill of activeFilterPills(); track pill.id) {
+        <span class="inline-flex items-center gap-1 rounded-full border border-brand-primary bg-brand-soft py-0.5 pl-2.5 pr-1 text-xs font-medium text-brand-primary">
+          {{ pill.label }}
+          <button
+            type="button"
+            class="inline-flex size-4 items-center justify-center rounded-full text-brand-primary hover:bg-brand-primary hover:text-text-on-brand focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600"
+            (click)="pill.remove()"
+            [attr.aria-label]="'Remove filter: ' + pill.label"
+          >
+            <svg aria-hidden="true" class="size-2.5" viewBox="0 0 10 10" fill="currentColor">
+              <path d="M1.47 1.47a.75.75 0 0 1 1.06 0L5 3.94l2.47-2.47a.75.75 0 1 1 1.06 1.06L6.06 5l2.47 2.47a.75.75 0 1 1-1.06 1.06L5 6.06 2.53 8.53a.75.75 0 0 1-1.06-1.06L3.94 5 1.47 2.53a.75.75 0 0 1 0-1.06Z"/>
+            </svg>
+          </button>
+        </span>
+      }
+
+      <button
+        type="button"
+        class="ml-auto text-sm font-medium text-text-secondary hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        (click)="filterService.clearFilters()"
+        aria-label="Clear all active filters"
+      >
+        Clear all
+      </button>
+    </div>
+  }
+
+  @if (filterService.loading()) {
     <p class="text-text-secondary" role="status">Loading saved words…</p>
-  } @else if (savedLemmasService.loadError()) {
+  } @else if (filterService.loadError()) {
     <div class="flex items-center gap-3 rounded-xl border border-border-default bg-surface-card p-4">
       <p class="text-text-secondary">Saved words could not be loaded.</p>
-      <button type="button" class="font-medium text-brand-primary hover:underline" (click)="savedLemmasService.refresh()">
+      <button type="button" class="font-medium text-brand-primary hover:underline" (click)="filterService.refresh()">
         Try again
       </button>
     </div>
-  } @else if (savedLemmasService.savedLemmas().length === 0) {
+  } @else if (filterService.savedLemmas().length === 0) {
     <p class="rounded-xl border border-border-default bg-surface-card p-4 text-text-secondary">
-      You haven’t saved any words yet.
+      @if (filterService.hasActiveFilters()) {
+        No saved words match the current filters.
+      } @else {
+        You haven't saved any words yet.
+      }
     </p>
   } @else {
     <div class="flex flex-col gap-4">
-      @for (saved of savedLemmasService.savedLemmas(); track saved.id) {
+      @for (saved of filterService.savedLemmas(); track saved.id) {
         <app-lemma-item [lemma]="saved.lemma" [contextSentence]="saved.contextSentence" />
       }
     </div>
