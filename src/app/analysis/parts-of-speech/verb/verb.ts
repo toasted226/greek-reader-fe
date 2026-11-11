@@ -54,7 +54,7 @@ export class Verb {
         groups.set(key, {
           key,
           features,
-          label: features.map((feature) => this.featureLabel(feature)).join(' · ') || 'Forms',
+          label: features.map((feature) => this.titleCase(feature)).join(' · ') || 'Forms',
         });
       }
     }
@@ -64,8 +64,8 @@ export class Verb {
   get otherForms(): OtherForm[] {
     return this.lemma().forms
       .filter((form) => !form.features.some((feature) => personFeatures.has(feature)
-        || feature === 'participle' || feature === 'infinitive-aorist'))
-      .map((form) => ({ form: form.form, features: form.features.map((feature) => this.featureLabel(feature)).join(', ') }));
+        || feature === 'participle' || feature === 'infinitive'))
+      .map((form) => ({ form: form.form, features: form.features.map((feature) => this.titleCase(feature)).join(', ') }));
   }
 
   get participleForms(): ParticipleForm[] {
@@ -87,7 +87,7 @@ export class Verb {
 
   get infinitiveForms(): InfinitiveForm[] {
     return this.lemma().forms
-      .filter((form) => form.features.includes('infinitive-aorist'))
+      .filter((form) => form.features.includes('infinitive'))
       .map((form) => ({
         voice: this.titleCase(form.features.find((feature) => ['active', 'passive'].includes(feature)) ?? '—'),
         form: form.form,
@@ -99,11 +99,6 @@ export class Verb {
 
   getForm(group: VerbGroup, person: string, number: string): string {
     return findForm(this.lemma().forms, [...group.features, person, number]);
-  }
-
-  private featureLabel(value: string): string {
-    if (value === 'infinitive-aorist') return 'Aorist infinitive';
-    return this.titleCase(value);
   }
 
   private titleCase(value: string): string {

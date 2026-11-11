@@ -12,7 +12,7 @@ import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from "../tokens";
 import { HttpParamsBuilder } from "../utils/http-params-builder";
-import { RequestOptions, LemmaResponse, AnalyseRequest, AnalyseResponse, UserLemmaResponse, CreateUserLemmaRequest, FileMetadataResponse, IFormFile, UploadFileResponse } from "../models";
+import { RequestOptions, LemmaResponse, AnalyseRequest, AnalyseResponse, FeaturesResponse, FeatureListParam, UserLemmaResponse, CreateUserLemmaRequest, FileMetadataResponse, IFormFile, UploadFileResponse } from "../models";
 
 @Injectable({ providedIn: "root" })
 export class LexiconEndpointsService {
@@ -88,11 +88,17 @@ export class LexiconEndpointsService {
         });
     }
 
-    lemmasGet(observe?: 'body', options?: RequestOptions<'json'>): Observable<Array<UserLemmaResponse>>;
-    lemmasGet(observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<Array<UserLemmaResponse>>>;
-    lemmasGet(observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<Array<UserLemmaResponse>>>;
-    lemmasGet(observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
-        const url = `${this.basePath}/lemmas`;
+    lexiconFeaturesGet(partOfSpeech?: string, observe?: 'body', options?: RequestOptions<'json'>): Observable<FeaturesResponse>;
+    lexiconFeaturesGet(partOfSpeech?: string, observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<FeaturesResponse>>;
+    lexiconFeaturesGet(partOfSpeech?: string, observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<FeaturesResponse>>;
+    /** Returns every distinct grammatical feature that can occur on a form of the given part of speech. Omit partOfSpeech to list features across all parts of speech. An unrecognised part of speech returns an empty feature list. */
+    lexiconFeaturesGet(partOfSpeech?: string, observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
+        const url = `${this.basePath}/lexicon/features`;
+
+        let params = new HttpParams();
+        if (partOfSpeech != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, partOfSpeech, 'partOfSpeech');
+        }
 
         let headers: HttpHeaders;
         if (options?.headers instanceof HttpHeaders) {
@@ -108,6 +114,60 @@ export class LexiconEndpointsService {
         return this.httpClient.request('get', url, {
             observe,
             headers,
+            params,
+            reportProgress: options?.reportProgress,
+            withCredentials: options?.withCredentials,
+            context: this.createContextWithClientId(options?.context)
+        });
+    }
+
+    lemmasGet(partOfSpeech?: string, lemma?: string, form?: string, example?: string, featureList?: FeatureListParam, minDate?: Date, maxDate?: Date, latest?: boolean, observe?: 'body', options?: RequestOptions<'json'>): Observable<Array<UserLemmaResponse>>;
+    lemmasGet(partOfSpeech?: string, lemma?: string, form?: string, example?: string, featureList?: FeatureListParam, minDate?: Date, maxDate?: Date, latest?: boolean, observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<Array<UserLemmaResponse>>>;
+    lemmasGet(partOfSpeech?: string, lemma?: string, form?: string, example?: string, featureList?: FeatureListParam, minDate?: Date, maxDate?: Date, latest?: boolean, observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<Array<UserLemmaResponse>>>;
+    lemmasGet(partOfSpeech?: string, lemma?: string, form?: string, example?: string, featureList?: FeatureListParam, minDate?: Date, maxDate?: Date, latest?: boolean, observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
+        const url = `${this.basePath}/lemmas`;
+
+        let params = new HttpParams();
+        if (partOfSpeech != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, partOfSpeech, 'partOfSpeech');
+        }
+        if (lemma != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, lemma, 'lemma');
+        }
+        if (form != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, form, 'form');
+        }
+        if (example != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, example, 'example');
+        }
+        if (featureList != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, featureList, 'featureList');
+        }
+        if (minDate != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, minDate, 'minDate');
+        }
+        if (maxDate != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, maxDate, 'maxDate');
+        }
+        if (latest != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, latest, 'latest');
+        }
+
+        let headers: HttpHeaders;
+        if (options?.headers instanceof HttpHeaders) {
+            headers = options.headers;
+        } else {
+            headers = new HttpHeaders(options?.headers);
+        }
+        // Advertise the response content type declared in the spec
+        if (!headers.has('Accept')) {
+            headers = headers.set('Accept', 'application/json');
+        }
+
+        return this.httpClient.request('get', url, {
+            observe,
+            headers,
+            params,
             reportProgress: options?.reportProgress,
             withCredentials: options?.withCredentials,
             context: this.createContextWithClientId(options?.context)

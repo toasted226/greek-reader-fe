@@ -35,6 +35,13 @@ export interface ExampleResponse {
     english: string;
 }
 
+/** A grammatical feature (e.g. masculine) or a comma-separated list of features, optionally wrapped in square brackets (e.g. [masculine, nominative] or masculine, nominative). */
+export type FeatureListParam = string;
+
+export interface FeaturesResponse {
+    features: Array<string>;
+}
+
 export interface FileMetadataResponse {
     id?: number | string;
     originalFileName?: string;
@@ -46,6 +53,15 @@ export interface FileMetadataResponse {
 export interface FormResponse {
     form: string;
     features: Array<string>;
+}
+
+export interface HttpValidationProblemDetails {
+    type?: string | null;
+    title?: string | null;
+    status?: number | null | string | null | null;
+    detail?: string | null;
+    instance?: string | null;
+    errors?: Record<string, Array<string>>;
 }
 
 export type IFormFile = Blob;
@@ -94,7 +110,6 @@ export interface UploadFileResponse {
 
 export interface UserLemmaResponse {
     id: number | string;
-    userId: number | string;
     lemma: LemmaResponse;
     contextSentence: string;
 }
