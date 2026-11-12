@@ -2,6 +2,9 @@
 
 @import 'tailwindcss';
 
+/* Class-based dark mode: `html.dark` is toggled by ThemeService. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Brand Tokens */
   --color-brand-primary: #1d4ed8;
@@ -21,11 +24,81 @@
   /* Border Tokens */
   --color-border-default: #cbd5e1;
 
+  /* Status Tokens */
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fef2f2;
+  --color-danger-soft-strong: #fee2e2;
+  --color-danger-border: #fecaca;
+  --color-danger-border-strong: #fca5a5;
+  --color-danger-solid: #dc2626;
+  --color-danger-solid-hover: #b91c1c;
+  --color-danger-on-solid: #ffffff;
+  --color-danger-focus: #ef4444;
+
+  --color-success: #15803d;
+  --color-success-soft: #f0fdf4;
+  --color-success-border: #bbf7d0;
+
   /* Semantic Aliases */
   --color-brand: #1d4ed8;
   --color-border: #cbd5e1;
 
   --text-size-base: 1.125rem;
+}
+
+/* Dark theme token overrides. Utilities reference these variables, so
+   swapping the values here re-themes the whole app without dark: variants. */
+.dark {
+  /* Brand Tokens */
+  --color-brand-primary: #93c5fd;
+  --color-brand-soft: #1e3a8a;
+  --color-brand-accent: #fbbf24;
+
+  /* Text Tokens */
+  --color-text-primary: #e2e8f0;
+  --color-text-secondary: #94a3b8;
+  --color-text-on-brand: #0b1220;
+
+  /* Surface Tokens */
+  --color-surface-page: #0f172a;
+  --color-surface-card: #1e293b;
+  --color-surface-sunken: #334155;
+
+  /* Border Tokens */
+  --color-border-default: #334155;
+
+  /* Status Tokens */
+  --color-danger: #fca5a5;
+  --color-danger-soft: #2a1518;
+  --color-danger-soft-strong: #4c1d1d;
+  --color-danger-border: #7f1d1d;
+  --color-danger-border-strong: #b91c1c;
+  --color-danger-solid: #dc2626;
+  --color-danger-solid-hover: #b91c1c;
+  --color-danger-on-solid: #ffffff;
+  --color-danger-focus: #f87171;
+
+  --color-success: #86efac;
+  --color-success-soft: #0c2016;
+  --color-success-border: #166534;
+
+  /* Semantic Aliases */
+  --color-brand: #93c5fd;
+  --color-border: #334155;
+}
+
+/* Tailwind inlines its default shadow colours into each utility, so override
+   the colour hook rather than the (unused) --shadow-* theme variables. Black
+   shadows at the default 5-10% are invisible on dark surfaces. */
+.dark .shadow-2xs,
+.dark .shadow-xs,
+.dark .shadow-sm,
+.dark .shadow,
+.dark .shadow-md,
+.dark .shadow-lg,
+.dark .shadow-xl,
+.dark .shadow-2xl {
+  --tw-shadow-color: rgb(0 0 0 / 0.45);
 }
 
 /* Global defaults */
@@ -34,12 +107,30 @@ html, body {
   height: 100%;
 }
 
+/* Drives native controls, scrollbars and Material's light-dark() tokens. */
+:root {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
 /* Custom select chevron — used by the saved-words filter POS dropdown.
-   Defined here to keep the SVG data URI out of Angular templates. */
+   The data URI lives in a variable so it can track the text-secondary token
+   (light #475569, dark #94a3b8) instead of a fixed light-mode fill. */
+:root {
+  --filter-select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23475569'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+html.dark {
+  --filter-select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2394a3b8'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+}
+
 .filter-select {
   appearance: none;
   background-repeat: no-repeat;
   background-position: right 0.5rem center;
   background-size: 1rem 1rem;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23475569'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-image: var(--filter-select-chevron);
 }

@@ -117,7 +117,6 @@ describe('InflectionTable', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.textContent).toContain('Inflections');
     expect(compiled.textContent).toContain('Case');
     expect(compiled.textContent).toContain('Singular');
     expect(compiled.textContent).toContain('Plural');

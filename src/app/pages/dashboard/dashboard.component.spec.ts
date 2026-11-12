@@ -27,6 +27,19 @@ describe('DashboardComponent', () => {
     expect(toolbar?.querySelector('.select-none')).toBeTruthy();
   });
 
+  it('should render the theme toggle on the right side of the toolbar', async () => {
+    const fixture = TestBed.createComponent(DashboardComponent);
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const toolbar = compiled.querySelector('mat-toolbar');
+    const actions = toolbar?.querySelector('.ml-auto');
+
+    expect(toolbar?.querySelector('app-theme-toggle')).toBeTruthy();
+    expect(actions?.querySelector('app-theme-toggle')).toBeTruthy();
+    expect(actions?.querySelector('button[aria-label="Sign out"]')).toBeTruthy();
+  });
+
   it('should render universal scroll-to-top component in the shell layout', async () => {
     const fixture = TestBed.createComponent(DashboardComponent);
     await fixture.whenStable();

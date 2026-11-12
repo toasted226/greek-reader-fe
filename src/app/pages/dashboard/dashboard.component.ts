@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { ScrollToTop } from '../../components/scroll-to-top/scroll-to-top';
+import { ThemeToggle } from '../../components/theme-toggle/theme-toggle';
 import { AuthEndpointsService } from '../../../api';
 import { AuthService } from '../../auth/auth.service';
 
@@ -21,6 +22,7 @@ import { AuthService } from '../../auth/auth.service';
     MatIconModule,
     MatListModule,
     ScrollToTop,
+    ThemeToggle,
   ],
   templateUrl: './dashboard.component.html',
   host: {

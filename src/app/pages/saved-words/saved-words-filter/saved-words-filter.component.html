@@ -27,7 +27,7 @@
         <input
           id="filter-lemma"
           type="search"
-          class="w-full rounded-lg border border-border-default bg-surface-page py-1.5 pl-8 pr-3 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          class="w-full rounded-lg border border-border-default bg-surface-page py-1.5 pl-8 pr-3 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
           placeholder="Search headword…"
           [value]="filterService.lemmaSearch()"
           (input)="onLemmaInput($any($event.target).value)"
@@ -63,7 +63,7 @@
         <input
           id="filter-form"
           type="search"
-          class="w-full rounded-lg border border-border-default bg-surface-page py-1.5 pl-8 pr-3 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          class="w-full rounded-lg border border-border-default bg-surface-page py-1.5 pl-8 pr-3 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
           placeholder="Search inflected form…"
           [value]="filterService.formSearch()"
           (input)="onFormInput($any($event.target).value)"
@@ -85,7 +85,7 @@
       </label>
       <select
         id="filter-pos"
-        class="filter-select rounded-lg border border-border-default bg-surface-page py-1.5 pl-3 pr-8 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        class="filter-select rounded-lg border border-border-default bg-surface-page py-1.5 pl-3 pr-8 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
         [value]="filterService.partOfSpeech() ?? ''"
         (change)="onPosChange($any($event.target).value)"
         aria-label="Filter by part of speech"
@@ -110,11 +110,11 @@
         />
         <!-- Track -->
         <span
-          class="h-5 w-9 rounded-full border border-border-default bg-surface-sunken transition-colors peer-checked:border-brand-primary peer-checked:bg-brand-primary peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-blue-600"
+          class="h-5 w-9 rounded-full border border-border-default bg-surface-sunken transition-colors peer-checked:border-brand-primary peer-checked:bg-brand-primary peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-primary"
         ></span>
         <!-- Thumb -->
         <span
-          class="absolute left-0.5 top-0.5 size-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-4"
+          class="absolute left-0.5 top-0.5 size-4 rounded-full bg-surface-card shadow-sm transition-transform peer-checked:translate-x-4"
         ></span>
       </span>
       Latest
@@ -123,7 +123,7 @@
     <!-- More filters toggle -->
     <button
       type="button"
-      class="flex items-center gap-1.5 self-end pb-1.5 text-sm font-medium text-brand-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+      class="flex items-center gap-1.5 self-end pb-1.5 text-sm font-medium text-brand-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
       (click)="showMore.set(!showMore())"
       [attr.aria-expanded]="showMore()"
       aria-controls="filter-more"
@@ -163,7 +163,7 @@
           <input
             id="filter-min-date"
             type="date"
-            class="rounded-lg border border-border-default bg-surface-page px-3 py-1.5 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            class="rounded-lg border border-border-default bg-surface-page px-3 py-1.5 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
             [value]="dateToInputValue(filterService.minDate())"
             (change)="onMinDateChange($any($event.target).value)"
             aria-label="Saved from date"
@@ -177,7 +177,7 @@
           <input
             id="filter-max-date"
             type="date"
-            class="rounded-lg border border-border-default bg-surface-page px-3 py-1.5 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            class="rounded-lg border border-border-default bg-surface-page px-3 py-1.5 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
             [value]="dateToInputValue(filterService.maxDate())"
             (change)="onMaxDateChange($any($event.target).value)"
             aria-label="Saved to date"
@@ -208,7 +208,7 @@
           @for (feature of filterService.availableFeatures(); track feature.key) {
             <button
               type="button"
-              class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
               [ngClass]="featureChipClasses(feature.key, feature.enabled ?? true)"
               [disabled]="!feature.enabled"
               [attr.aria-pressed]="filterService.selectedFeatures().includes(feature.key)"
@@ -242,7 +242,7 @@
           <input
             id="filter-example"
             type="search"
-            class="w-full rounded-lg border border-border-default bg-surface-page py-1.5 pl-8 pr-3 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            class="w-full rounded-lg border border-border-default bg-surface-page py-1.5 pl-8 pr-3 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
             placeholder="Search within saved context sentences…"
             [value]="filterService.exampleSearch()"
             (input)="onExampleInput($any($event.target).value)"

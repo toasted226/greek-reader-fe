@@ -1,0 +1,31 @@
+<button
+  mat-icon-button
+  type="button"
+  class="text-text-primary transition-colors hover:bg-surface-sunken"
+  [matMenuTriggerFor]="themeMenu"
+  [attr.aria-label]="'Theme: ' + activeLabel()"
+  [attr.title]="'Theme: ' + activeLabel()"
+>
+  <mat-icon aria-hidden="true">{{ triggerIcon() }}</mat-icon>
+</button>
+
+<mat-menu #themeMenu="matMenu" xPosition="before" yPosition="below">
+  @for (option of options; track option.value) {
+    <button
+      mat-menu-item
+      type="button"
+      role="menuitemradio"
+      [attr.aria-checked]="preference() === option.value"
+      [style.color]="preference() === option.value ? 'var(--color-brand-primary)' : null"
+      (click)="select(option.value)"
+    >
+      <mat-icon aria-hidden="true">{{ option.icon }}</mat-icon>
+      <span class="flex w-full items-center justify-between gap-3">
+        <span>{{ option.label }}</span>
+        @if (preference() === option.value) {
+          <mat-icon class="!m-0" aria-hidden="true">check</mat-icon>
+        }
+      </span>
+    </button>
+  }
+</mat-menu>

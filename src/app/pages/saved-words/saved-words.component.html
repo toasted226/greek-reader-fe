@@ -21,7 +21,7 @@
           {{ pill.label }}
           <button
             type="button"
-            class="inline-flex size-4 items-center justify-center rounded-full text-brand-primary hover:bg-brand-primary hover:text-text-on-brand focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600"
+            class="inline-flex size-4 items-center justify-center rounded-full text-brand-primary hover:bg-brand-primary hover:text-text-on-brand focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-primary"
             (click)="pill.remove()"
             [attr.aria-label]="'Remove filter: ' + pill.label"
           >
@@ -34,7 +34,7 @@
 
       <button
         type="button"
-        class="ml-auto text-sm font-medium text-text-secondary hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        class="ml-auto text-sm font-medium text-text-secondary hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
         (click)="filterService.clearFilters()"
         aria-label="Clear all active filters"
       >

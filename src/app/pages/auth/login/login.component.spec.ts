@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { NEVER, of, throwError } from 'rxjs';
 import { LoginComponent } from './login.component';
 import { AuthEndpointsService } from '../../../../api';
@@ -15,7 +16,10 @@ describe('LoginComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [LoginComponent],
-      providers: [{ provide: AuthEndpointsService, useValue: authServiceMock }],
+      providers: [
+        provideRouter([]),
+        { provide: AuthEndpointsService, useValue: authServiceMock },
+      ],
     });
 
     const fixture = TestBed.createComponent(LoginComponent);

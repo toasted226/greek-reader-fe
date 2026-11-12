@@ -49,7 +49,7 @@
         [disabled]="isLoading()"
       ></textarea>
       @if (errorMessage()) {
-        <div class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2.5">
+        <div class="text-sm text-danger bg-danger-soft border border-danger-border rounded-lg p-2.5">
           {{ errorMessage() }}
         </div>
       }
