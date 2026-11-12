@@ -44,7 +44,7 @@
                 </li>
               } @else if (filesLoadError()) {
                 <li class="flex flex-col items-center gap-2 p-8 text-center text-sm" role="alert">
-                  <mat-icon aria-hidden="true" class="size-8! text-3xl! text-red-400">error_outline</mat-icon>
+                  <mat-icon aria-hidden="true" class="size-8! text-3xl! text-danger">error_outline</mat-icon>
                   <p class="font-medium text-text-primary">Could not load files</p>
                   <p class="text-xs text-text-secondary">{{ filesLoadError() }}</p>
                 </li>
@@ -85,7 +85,7 @@
                       [attr.aria-label]="'Delete ' + file.displayName"
                       title="Delete file"
                       (click)="deleteFile(file, $event)"
-                      class="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-secondary hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                      class="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-secondary hover:bg-danger-soft hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
                     >
                       <mat-icon aria-hidden="true" class="text-[18px]!">delete_outline</mat-icon>
                     </button>
@@ -145,7 +145,7 @@
                             <span>Loading files…</span>
                           </li>
                         } @else if (filesLoadError()) {
-                          <li class="p-4 flex items-start gap-2 text-sm text-red-600" role="alert">
+                          <li class="p-4 flex items-start gap-2 text-sm text-danger" role="alert">
                             <mat-icon class="text-lg! size-5!">error_outline</mat-icon>
                             <span>{{ filesLoadError() }}</span>
                           </li>
@@ -175,7 +175,7 @@
                                 [attr.aria-label]="'Delete ' + file.displayName"
                                 title="Delete file"
                                 (click)="deleteFile(file, $event)"
-                                class="size-8 rounded-lg flex items-center justify-center text-text-secondary hover:text-red-600 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary cursor-pointer shrink-0"
+                                class="size-8 rounded-lg flex items-center justify-center text-text-secondary hover:text-danger hover:bg-danger-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary cursor-pointer shrink-0"
                               >
                                 <mat-icon aria-hidden="true" class="text-[16px]!">delete_outline</mat-icon>
                               </button>

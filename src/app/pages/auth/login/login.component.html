@@ -57,7 +57,7 @@
 
       @if (successMessage()) {
         <div
-          class="text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl p-3 text-center"
+          class="text-sm text-success bg-success-soft border border-success-border rounded-xl p-3 text-center"
           role="status"
         >
           {{ successMessage() }}
@@ -66,7 +66,7 @@
 
       @if (errorMessage()) {
         <div
-          class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl p-3 text-center"
+          class="text-sm text-danger bg-danger-soft border border-danger-border rounded-xl p-3 text-center"
           role="alert"
         >
           {{ errorMessage() }}

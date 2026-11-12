@@ -18,8 +18,9 @@
       }
       <button
         type="button"
-        class="inline-flex size-9 items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-surface-page hover:text-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-        [class.text-blue-600]="isSaved()"
+        class="inline-flex size-9 items-center justify-center rounded-lg transition-colors hover:bg-surface-page hover:text-brand-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
+        [class.text-text-secondary]="!isSaved()"
+        [class.text-brand-primary]="isSaved()"
         [attr.aria-label]="isSaved() ? 'Remove saved lemma' : 'Save lemma'"
         [attr.aria-pressed]="isSaved()"
         (click)="toggleSaved()"

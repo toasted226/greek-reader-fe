@@ -7,15 +7,15 @@
 
   <section
     aria-labelledby="delete-account-heading"
-    class="w-full max-w-3xl overflow-hidden rounded-2xl border border-red-200 bg-surface-card shadow-xs"
+    class="w-full max-w-3xl overflow-hidden rounded-2xl border border-danger-border bg-surface-card shadow-xs"
   >
-    <div class="border-b border-red-100 bg-red-50/70 p-5 sm:p-6">
+    <div class="border-b border-danger-border bg-danger-soft/70 p-5 sm:p-6">
       <div class="flex items-start gap-4">
-        <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-700" aria-hidden="true">
+        <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-danger-soft-strong text-danger" aria-hidden="true">
           <mat-icon>person_remove</mat-icon>
         </span>
         <div class="min-w-0">
-          <span class="text-xs font-semibold uppercase tracking-[0.12em] text-red-700">Danger zone</span>
+          <span class="text-xs font-semibold uppercase tracking-[0.12em] text-danger">Danger zone</span>
           <h2 id="delete-account-heading" class="mt-1 text-xl font-semibold tracking-tight text-text-primary">
             Delete your account
           </h2>
@@ -35,7 +35,7 @@
       </div>
 
       @if (errorMessage()) {
-        <div class="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 p-3.5 text-sm text-red-700" role="alert">
+        <div class="flex items-start gap-2.5 rounded-xl border border-danger-border bg-danger-soft p-3.5 text-sm text-danger" role="alert">
           <mat-icon class="shrink-0">error_outline</mat-icon>
           <span>{{ errorMessage() }}</span>
         </div>
@@ -47,7 +47,7 @@
           type="button"
           (click)="confirmAccountDeletion()"
           [disabled]="isLoading()"
-          class="inline-flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-red-300 bg-white px-4 text-sm font-semibold text-red-700 shadow-xs transition-colors hover:border-red-400 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          class="inline-flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-danger-border-strong bg-surface-card px-4 text-sm font-semibold text-danger shadow-xs transition-colors hover:border-danger hover:bg-danger-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-card disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         >
           @if (isLoading()) {
             <mat-progress-spinner mode="indeterminate" [diameter]="18" aria-label="Deleting account" />

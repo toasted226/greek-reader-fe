@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { AnalyseComponent } from './analyse.component';
 import { LexiconEndpointsService } from '../../../api';
+import { ResizablePanelDirective } from '../../shared/directives/resizable-panel.directive';
 import { of } from 'rxjs';
 
 describe('AnalyseComponent', () => {
@@ -18,6 +20,12 @@ describe('AnalyseComponent', () => {
       ],
     }).compileComponents();
   });
+
+  function getResizer(fixture: ReturnType<typeof TestBed.createComponent<AnalyseComponent>>) {
+    return fixture.debugElement
+      .query(By.directive(ResizablePanelDirective))
+      .injector.get(ResizablePanelDirective);
+  }
 
   it('should create the component', () => {
     const fixture = TestBed.createComponent(AnalyseComponent);
@@ -42,56 +50,56 @@ describe('AnalyseComponent', () => {
   it('should resize info panel on pointer drag within clamped bounds', () => {
     const fixture = TestBed.createComponent(AnalyseComponent);
     fixture.detectChanges();
-    const component = fixture.componentInstance;
+    const resizer = getResizer(fixture);
 
-    expect(component.infoPanelWidth()).toBe(450);
+    expect(resizer.panelWidth()).toBe(450);
 
     // Simulate drag start at clientX = 800
     const separator = fixture.nativeElement.querySelector('[role="separator"]') as HTMLElement;
-    component.onResizeStart({
+    resizer.onResizeStart({
       button: 0,
       clientX: 800,
       pointerId: 1,
       currentTarget: separator,
     } as unknown as PointerEvent);
 
-    expect(component.isDragging()).toBe(true);
+    expect(resizer.isDragging()).toBe(true);
 
     // Drag left by 50px (clientX = 750) -> width increases by 50 to 500
-    component.onResizeMove({ clientX: 750 } as PointerEvent);
-    expect(component.infoPanelWidth()).toBe(500);
+    resizer.onResizeMove({ clientX: 750 } as PointerEvent);
+    expect(resizer.panelWidth()).toBe(500);
 
     // Drag far left to exceed MAX_WIDTH (650) -> clamped at 650
-    component.onResizeMove({ clientX: 400 } as PointerEvent);
-    expect(component.infoPanelWidth()).toBe(650);
+    resizer.onResizeMove({ clientX: 400 } as PointerEvent);
+    expect(resizer.panelWidth()).toBe(650);
 
     // Drag far right to exceed MIN_WIDTH (430) -> clamped at 430
-    component.onResizeMove({ clientX: 1200 } as PointerEvent);
-    expect(component.infoPanelWidth()).toBe(430);
+    resizer.onResizeMove({ clientX: 1200 } as PointerEvent);
+    expect(resizer.panelWidth()).toBe(430);
 
     // End drag
-    component.onResizeEnd({ pointerId: 1, currentTarget: separator } as unknown as PointerEvent);
-    expect(component.isDragging()).toBe(false);
+    resizer.onResizeEnd({ pointerId: 1, currentTarget: separator } as unknown as PointerEvent);
+    expect(resizer.isDragging()).toBe(false);
   });
 
   it('should resize info panel using keyboard arrow keys and reset with Home', () => {
     const fixture = TestBed.createComponent(AnalyseComponent);
     fixture.detectChanges();
-    const component = fixture.componentInstance;
+    const resizer = getResizer(fixture);
 
-    expect(component.infoPanelWidth()).toBe(450);
+    expect(resizer.panelWidth()).toBe(450);
 
     // ArrowLeft widens panel
-    component.onKeyDown({ key: 'ArrowLeft', preventDefault: vi.fn() } as unknown as KeyboardEvent);
-    expect(component.infoPanelWidth()).toBe(460);
+    resizer.onKeyDown({ key: 'ArrowLeft', preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    expect(resizer.panelWidth()).toBe(460);
 
     // ArrowRight narrows panel
-    component.onKeyDown({ key: 'ArrowRight', preventDefault: vi.fn() } as unknown as KeyboardEvent);
-    expect(component.infoPanelWidth()).toBe(450);
+    resizer.onKeyDown({ key: 'ArrowRight', preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    expect(resizer.panelWidth()).toBe(450);
 
     // Home resets to default (450)
-    component.infoPanelWidth.set(500);
-    component.onKeyDown({ key: 'Home', preventDefault: vi.fn() } as unknown as KeyboardEvent);
-    expect(component.infoPanelWidth()).toBe(450);
+    resizer.panelWidth.set(500);
+    resizer.onKeyDown({ key: 'Home', preventDefault: vi.fn() } as unknown as KeyboardEvent);
+    expect(resizer.panelWidth()).toBe(450);
   });
 });

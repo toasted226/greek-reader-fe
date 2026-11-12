@@ -36,6 +36,7 @@ describe('LemmaItem', () => {
 
   it('should create and render lemma, pos badge, glosses, forms, and examples', () => {
     fixture.componentRef.setInput('lemma', mockLemma);
+    fixture.componentRef.setInput('contextSentence', 'Ἐν ἀρχῇ ἦν ὁ λόγος.');
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
@@ -48,8 +49,19 @@ describe('LemmaItem', () => {
     expect(compiled.textContent).toContain('Definitions');
     expect(compiled.textContent).toContain('word, speech, reason');
 
-    // Inflected forms
+    // Inflected forms are rendered behind a collapsed disclosure.
     expect(compiled.textContent).toContain('Inflections');
+    const inflectionToggle = compiled.querySelector(
+      'button[aria-controls="inflection-table"]',
+    ) as HTMLButtonElement;
+    expect(inflectionToggle).toBeTruthy();
+    expect(inflectionToggle.getAttribute('aria-expanded')).toBe('false');
+    expect(compiled.textContent).not.toContain('λόγου');
+
+    inflectionToggle.click();
+    fixture.detectChanges();
+
+    expect(inflectionToggle.getAttribute('aria-expanded')).toBe('true');
     expect(compiled.textContent).toContain('λόγου');
     expect(compiled.textContent).toContain('gen, masc, sg');
 
@@ -70,6 +82,7 @@ describe('LemmaItem', () => {
     };
 
     fixture.componentRef.setInput('lemma', minimalLemma);
+    fixture.componentRef.setInput('contextSentence', 'καὶ εἶπεν αὐτοῖς.');
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;

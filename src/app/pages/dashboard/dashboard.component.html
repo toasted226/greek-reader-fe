@@ -4,19 +4,22 @@
       <span class="text-brand-primary font-bold text-2xl leading-none">Ω</span>
       <span class="font-bold text-xl tracking-tight">Greek Reader</span>
     </div>
-    <button
-      mat-icon-button
-      type="button"
-      aria-label="Sign out"
-      class="ml-auto md:hidden"
-      (click)="signOut()"
-      [disabled]="isSigningOut()"
-    >
-      <mat-icon>logout</mat-icon>
-    </button>
+    <div class="ml-auto flex items-center gap-1">
+      <app-theme-toggle />
+      <button
+        mat-icon-button
+        type="button"
+        aria-label="Sign out"
+        class="md:hidden"
+        (click)="signOut()"
+        [disabled]="isSigningOut()"
+      >
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
   </mat-toolbar>
   @if (signOutError()) {
-    <p class="bg-surface-card px-4 py-2 text-xs text-red-700 md:hidden" role="alert">{{ signOutError() }}</p>
+    <p class="bg-surface-card px-4 py-2 text-xs text-danger md:hidden" role="alert">{{ signOutError() }}</p>
   }
 
   <mat-sidenav-container class="flex-1 w-full bg-transparent!">
@@ -49,7 +52,7 @@
 
         <div class="mt-auto border-t border-border-default p-2">
           @if (signOutError()) {
-            <p class="mb-2 px-2 text-xs text-red-700" role="alert">{{ signOutError() }}</p>
+            <p class="mb-2 px-2 text-xs text-danger" role="alert">{{ signOutError() }}</p>
           }
           <button
             type="button"
