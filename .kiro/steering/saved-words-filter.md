@@ -19,12 +19,14 @@ The Saved Words page (`/saved-words`) lets authenticated users browse their save
 | `form` | `string` | `?form=value` |
 | `partOfSpeech` | `string` | `?partOfSpeech=value` |
 | `featureList` | `FeatureListParam` (`string`) | `?featureList=val1,val2` — comma-separated, optionally wrapped in brackets (`[val1,val2]`) |
-| `minDate` | `Date` | `?minDate=YYYY-MM-DD` — `format: date`, not ISO datetime |
-| `maxDate` | `Date` | `?maxDate=YYYY-MM-DD` — `format: date`, not ISO datetime |
+| `minDate` | `string` | `?minDate=YYYY-MM-DD` — `format: date`, not ISO datetime |
+| `maxDate` | `string` | `?maxDate=YYYY-MM-DD` — `format: date`, not ISO datetime |
 | `latest` | `boolean` | `?latest=true` |
 | `example` | `string` | `?example=value` |
 
-> **Note on featureList serialisation:** The OpenAPI spec declares `featureList` as a plain string (`FeatureListParam`), pattern `^(?:\[[^\[\]]*\]|[^\[\]]*)$`, with examples `masculine`, `masculine, nominative` and `[masculine, nominative]` — so both the bare and the bracketed comma-separated forms are valid. Because the value is a primitive, the generated `HttpParamsBuilder` appends it under the correct key (`?featureList=a,b`). `SavedWordsFilterService.fetchLemmas()` still builds `HttpParams` manually, but only because of the date filters: the generated client serialises `Date` as a full ISO datetime, while `minDate`/`maxDate` are declared `format: date` (`YYYY-MM-DD`).
+> **Note on date serialisation:** `src/api` is generated with `dateType: 'string'` (see `openapi.config.ts`), so `minDate`/`maxDate` are `string` in the generated client and accept the API's declared `format: date` value (`YYYY-MM-DD`) directly. `SavedWordsFilterService` formats its `Date` signal values with `toISOString().slice(0, 10)` and passes them to `LexiconEndpointsService.lemmasGet(...)`; it no longer builds `HttpParams` by hand. Do not switch the generator back to `dateType: 'Date'`: `HttpParamsBuilder.handleDate()` would then emit a full ISO datetime (`2026-11-01T00:00:00.000Z`) to a `DateOnly` parameter.
+>
+> **Note on featureList serialisation:** The OpenAPI spec declares `featureList` as a plain string (`FeatureListParam`), pattern `^(?:\[[^\[\]]*\]|[^\[\]]*)$`, with examples `masculine`, `masculine, nominative` and `[masculine, nominative]` — so both the bare and the bracketed comma-separated forms are valid. Because the value is a primitive, the generated `HttpParamsBuilder` appends it under the correct key (`?featureList=a,b`).
 
 > **Always fetch the live spec** at `http://localhost:3000/openapi/v1.json` (requires the backend to be running) before assuming parameter formats. The `generate:api` script in `package.json` regenerates the client from this spec.
 

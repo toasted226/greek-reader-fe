@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Subject, of, throwError } from 'rxjs';
 import { SavedWordsFilterService } from './saved-words-filter.service';
 import { FeatureCatalogService } from '../../analysis/feature-catalog.service';
@@ -8,8 +7,10 @@ import { FeaturesResponse } from '../../../api/models';
 
 describe('SavedWordsFilterService — feature catalog', () => {
   let service: SavedWordsFilterService;
-  let lexiconServiceMock: { lexiconFeaturesGet: ReturnType<typeof vi.fn> };
-  let httpMock: { get: ReturnType<typeof vi.fn> };
+  let lexiconServiceMock: {
+    lexiconFeaturesGet: ReturnType<typeof vi.fn>;
+    lemmasGet: ReturnType<typeof vi.fn>;
+  };
 
   const UNIVERSE = ['masculine', 'nominative', 'present', 'past'];
   const VERB_FEATURES = ['present', 'past'];
@@ -29,15 +30,16 @@ describe('SavedWordsFilterService — feature catalog', () => {
     service.availableFeatures().map((feature) => feature.key);
 
   beforeEach(() => {
-    lexiconServiceMock = { lexiconFeaturesGet: vi.fn() };
-    httpMock = { get: vi.fn(() => of([])) };
+    lexiconServiceMock = {
+      lexiconFeaturesGet: vi.fn(),
+      lemmasGet: vi.fn(() => of([])),
+    };
 
     TestBed.configureTestingModule({
       providers: [
         SavedWordsFilterService,
         FeatureCatalogService,
         { provide: LexiconEndpointsService, useValue: lexiconServiceMock },
-        { provide: HttpClient, useValue: httpMock },
       ],
     });
   });
@@ -219,9 +221,9 @@ describe('SavedWordsFilterService — feature catalog', () => {
 
       TestBed.tick();
 
-      const lastParams = httpMock.get.mock.calls.at(-1)?.[1]?.params as HttpParams;
-      expect(lastParams.get('partOfSpeech')).toBe('verb');
-      expect(lastParams.get('featureList')).toBe('present');
+      const lastArgs = lexiconServiceMock.lemmasGet.mock.calls.at(-1);
+      expect(lastArgs?.[0]).toBe('verb');
+      expect(lastArgs?.[4]).toBe('present');
     });
 
     it('keeps the selection when switching back to all parts of speech', () => {
@@ -271,14 +273,39 @@ describe('SavedWordsFilterService — feature catalog', () => {
       service.setPartOfSpeech('verb');
       TestBed.tick();
 
-      const callsBefore = httpMock.get.mock.calls.length;
+      const callsBefore = lexiconServiceMock.lemmasGet.mock.calls.length;
 
       pending.next(response('present', 'past'));
       pending.complete();
       TestBed.tick();
 
       expect(service.selectedFeatures()).toEqual(['present']);
-      expect(httpMock.get.mock.calls.length).toBe(callsBefore);
+      expect(lexiconServiceMock.lemmasGet.mock.calls.length).toBe(callsBefore);
+    });
+  });
+
+  describe('lemma fetch request mapping', () => {
+    it('omits empty filters and sends date filters as YYYY-MM-DD', () => {
+      respondByKey();
+
+      service = TestBed.inject(SavedWordsFilterService);
+      TestBed.tick();
+
+      // Initial unfiltered load: every optional filter omitted.
+      expect(lexiconServiceMock.lemmasGet).toHaveBeenLastCalledWith(
+        undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined,
+      );
+
+      service.setPartOfSpeech('verb');
+      service.toggleFeature('present');
+      service.minDate.set(new Date('2026-11-01T00:00:00Z'));
+      service.maxDate.set(new Date('2026-11-30T00:00:00Z'));
+      service.latest.set(true);
+      TestBed.tick();
+
+      expect(lexiconServiceMock.lemmasGet).toHaveBeenLastCalledWith(
+        'verb', undefined, undefined, undefined, 'present', '2026-11-01', '2026-11-30', true,
+      );
     });
   });
 });

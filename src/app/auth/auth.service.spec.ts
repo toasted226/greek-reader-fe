@@ -57,7 +57,7 @@ describe('AuthService', () => {
     const mockUser: MeResponse = {
       id: '123',
       email: 'user@example.com',
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     };
     setupTestBed('browser', vi.fn().mockReturnValue(of(mockUser)));
 
@@ -106,7 +106,7 @@ describe('AuthService', () => {
     const mockUser: MeResponse = {
       id: '123',
       email: 'user@example.com',
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     };
     service.setUser(mockUser);
 
@@ -135,7 +135,7 @@ describe('AuthService', () => {
     const mockUser: MeResponse = {
       id: '123',
       email: 'user@example.com',
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     };
     const mockRequest = {
       headers: new Headers({ cookie: 'session=123' }),

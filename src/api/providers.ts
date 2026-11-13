@@ -11,7 +11,6 @@ import { EnvironmentProviders, Provider, makeEnvironmentProviders } from "@angul
 import { HTTP_INTERCEPTORS, HttpInterceptor } from "@angular/common/http";
 import { BASE_PATH_DEFAULT, HTTP_INTERCEPTORS_DEFAULT } from "./tokens";
 import { DefaultBaseInterceptor } from "./utils/base-interceptor";
-import { DateInterceptor } from "./utils/date-transformer";
 
 /** Configuration options for default client */
 export interface DefaultConfig {
@@ -21,9 +20,6 @@ export interface DefaultConfig {
     enableDateTransform?: boolean;
     /** Array of HTTP interceptor classes to apply to this client */
     interceptors?: (new (...args: HttpInterceptor[]) => HttpInterceptor)[];
-    /** Override the pattern used to detect ISO date strings during date transformation. */
-    /** Defaults to the generated ISO_DATE_REGEX. */
-    dateTransformRegex?: RegExp;
 }
 
 /** Provides configuration for default client */
@@ -63,20 +59,11 @@ export function provideDefaultClient(config: DefaultConfig): EnvironmentProvider
     if (config.interceptors && config.interceptors.length > 0) {
         const interceptorInstances = config.interceptors.map(InterceptorClass => new InterceptorClass());
 
-        // Add date interceptor if enabled (default: true)
-        if (config.enableDateTransform !== false) {
-            interceptorInstances.unshift(new DateInterceptor(config.dateTransformRegex));
-        }
+        // Date transformation not available (dateType: 'string' was used in generation)
 
         providers.push({
             provide: HTTP_INTERCEPTORS_DEFAULT,
             useValue: interceptorInstances
-        });
-    } else if (config.enableDateTransform !== false) {
-        // Only date interceptor enabled
-        providers.push({
-            provide: HTTP_INTERCEPTORS_DEFAULT,
-            useValue: [new DateInterceptor(config.dateTransformRegex)]
         });
     } else {
         // No interceptors

@@ -6,11 +6,9 @@ import {
   signal,
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Subject, debounceTime } from 'rxjs';
 import { EMPTY, catchError, distinctUntilChanged, finalize, map, of, skip, switchMap } from 'rxjs';
-import { BASE_PATH_DEFAULT } from '../../../api/tokens';
-import { UserLemmaResponse } from '../../../api';
+import { LexiconEndpointsService, UserLemmaResponse } from '../../../api';
 import { FeatureEntry, buildFeatureEntries } from '../../analysis/filter-features';
 import { FeatureCatalogService } from '../../analysis/feature-catalog.service';
 
@@ -58,8 +56,7 @@ interface PosFeatureState {
 
 @Injectable({ providedIn: 'root' })
 export class SavedWordsFilterService {
-  private readonly httpClient = inject(HttpClient);
-  private readonly basePath = inject(BASE_PATH_DEFAULT);
+  private readonly endpoints = inject(LexiconEndpointsService);
   private readonly injector = inject(Injector);
   private readonly featureCatalog = inject(FeatureCatalogService);
 
@@ -97,7 +94,7 @@ export class SavedWordsFilterService {
     this.latest(),
   );
 
-  // ── Feature catalog state ────────────────────────────────────────────────
+  // ── Feature catalogue state ────────────────────────────────────────────────
   // The API is the authority on which features exist and which apply to a
   // given part of speech. `FeatureCatalogService` caches both per key, so the
   // requests below are free after the first one.
@@ -276,15 +273,17 @@ export class SavedWordsFilterService {
   }
 
   /**
-   * Builds query params and fetches the filtered lemma list directly via
-   * HttpClient rather than through LexiconEndpointsService.lemmasGet().
+   * Fetches the filtered lemma list through the generated
+   * `LexiconEndpointsService.lemmasGet()` client.
    *
-   * `featureList` itself is fine through the generated client now that the API
-   * declares it as a plain string (`FeatureListParam`) — HttpParamsBuilder
-   * appends it as `?featureList=a,b`. We still build the params by hand for
-   * the date filters: the generated client serialises `Date` values as full
-   * ISO datetimes (`2026-11-01T00:00:00.000Z`), while the API declares
-   * `minDate`/`maxDate` as `format: date` and expects `YYYY-MM-DD`.
+   * Empty filters are passed as `undefined` so they are omitted from the query
+   * string rather than sent as empty values. `latest` is likewise only sent
+   * when true (the API treats its absence as false).
+   *
+   * `minDate`/`maxDate` are date-only query parameters (`format: date`, bound
+   * to `DateOnly` server-side), so they are formatted as `YYYY-MM-DD` — the
+   * generated client accepts them as `string` because `openapi.config.ts`
+   * generates with `dateType: 'string'`.
    */
   private fetchLemmas(params: {
     lemma: string;
@@ -296,29 +295,29 @@ export class SavedWordsFilterService {
     maxDate: Date | null;
     latest: boolean;
   }): void {
-    let httpParams = new HttpParams();
-    if (params.pos)     httpParams = httpParams.set('partOfSpeech', params.pos);
-    if (params.lemma)   httpParams = httpParams.set('lemma', params.lemma);
-    if (params.form)    httpParams = httpParams.set('form', params.form);
-    if (params.example) httpParams = httpParams.set('example', params.example);
-    if (params.latest)  httpParams = httpParams.set('latest', 'true');
-    if (params.minDate) httpParams = httpParams.set('minDate', params.minDate.toISOString().slice(0, 10));
-    if (params.maxDate) httpParams = httpParams.set('maxDate', params.maxDate.toISOString().slice(0, 10));
-    if (params.features.length > 0) {
-      // Plain comma-separated list, e.g. `featureList=masculine,nominative`.
-      // The API also accepts the bracketed form `[a,b]`.
-      httpParams = httpParams.set('featureList', params.features.join(','));
-    }
-
     this.loadingSignal.set(true);
     this.loadErrorSignal.set(false);
 
-    this.httpClient.get<UserLemmaResponse[]>(`${this.basePath}/lemmas`, { params: httpParams }).pipe(
+    this.endpoints.lemmasGet(
+      params.pos ?? undefined,
+      params.lemma || undefined,
+      params.form || undefined,
+      params.example || undefined,
+      params.features.length > 0 ? params.features.join(',') : undefined,
+      params.minDate ? this.toDateParam(params.minDate) : undefined,
+      params.maxDate ? this.toDateParam(params.maxDate) : undefined,
+      params.latest || undefined,
+    ).pipe(
       catchError(() => {
         this.loadErrorSignal.set(true);
         return EMPTY;
       }),
       finalize(() => this.loadingSignal.set(false)),
     ).subscribe((lemmas) => this.savedLemmasSignal.set(lemmas));
+  }
+
+  /** Formats a date-input value as the API's date-only wire format (YYYY-MM-DD). */
+  private toDateParam(date: Date): string {
+    return date.toISOString().slice(0, 10);
   }
 }
