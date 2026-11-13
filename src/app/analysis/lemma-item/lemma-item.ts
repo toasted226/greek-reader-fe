@@ -28,6 +28,7 @@ export class LemmaItem {
   readonly matchedWord = input('');
   readonly matchedForms = computed(() => findMatchingForms(this.lemma().forms, this.matchedWord()));
   readonly showInflectionTable = signal(false);
+  readonly showExamples = signal(false);
 
   isSaved(): boolean {
     return this.savedLemmas.isSaved(this.lemma());
@@ -41,15 +42,14 @@ export class LemmaItem {
     const features = this.lemma()
       .forms.flatMap((f) => f.features)
       .filter(isGender);
-    return removeDuplicates(features).join(" | ")
+    return removeDuplicates(features).join(' | ');
   }
 
   getArticleType(): string {
     if (this.lemma().pos !== 'article') {
       return '';
     }
-    const features = this.lemma()
-      .forms.flatMap((f) => f.features);
+    const features = this.lemma().forms.flatMap((f) => f.features);
     if (features.includes('definite')) {
       return 'definite';
     }

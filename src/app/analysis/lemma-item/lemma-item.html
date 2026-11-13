@@ -94,15 +94,38 @@
   <!-- Examples -->
   @if (lemma().examples.length > 0) {
     <div class="flex flex-col gap-1.5">
-      <span class="text-xs font-medium text-text-secondary">Examples</span>
-      <div class="flex flex-col gap-2">
-        @for (eg of lemma().examples; track $index) {
-          <div class="flex flex-col gap-0.5 text-xs p-2 rounded-lg bg-surface-page border border-border-default">
-            <span class="font-serif text-text-primary">{{ eg.greek }}</span>
-            <span class="text-text-secondary italic">{{ eg.english }}</span>
-          </div>
-        }
-      </div>
+      <button
+        type="button"
+        class="flex w-full items-center justify-between gap-2 text-left hover:bg-brand-primary/5 rounded p-2"
+        (click)="showExamples.set(!showExamples())"
+        [attr.aria-expanded]="showExamples()"
+        aria-controls="inflection-table"
+      >
+        <span class="font-medium text-text-secondary">Examples</span>
+        <svg
+          aria-hidden="true"
+          class="size-4 text-text-secondary transition-transform duration-200"
+          [class.rotate-90]="!showExamples()"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </button>
+      @if (showExamples()) {
+        <div class="flex flex-col gap-2">
+          @for (eg of lemma().examples; track $index) {
+            <div class="flex flex-col gap-0.5 text-sm p-2 rounded-lg bg-surface-page border border-border-default">
+              <span class="text-text-primary">{{ eg.greek }}</span>
+              <span class="text-text-secondary italic">{{ eg.english }}</span>
+            </div>
+          }
+        </div>
+      }
     </div>
   }
 </div>
