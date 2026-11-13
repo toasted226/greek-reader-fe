@@ -33,7 +33,7 @@ describe('AnalyseComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render the analysed panel, resize divider, and sticky scrollable infopanel', () => {
+  it('should render the analysed panel, resize divider, and desktop-scrollable infopanel', () => {
     const fixture = TestBed.createComponent(AnalyseComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
@@ -41,8 +41,11 @@ describe('AnalyseComponent', () => {
     expect(containers.length).toBe(3);
     expect(containers[0].classList).toContain('flex-1');
     expect(containers[1].getAttribute('role')).toBe('separator');
-    expect(containers[2].classList).toContain('sticky');
-    expect(containers[2].classList).toContain('overflow-y-auto');
+    // Scroll containment is desktop-only so the panel scrolls with the page on mobile
+    expect(containers[2].classList).toContain('lg:sticky');
+    expect(containers[2].classList).toContain('lg:overflow-y-auto');
+    expect(containers[2].classList).not.toContain('overflow-y-auto');
+    expect(containers[2].classList).not.toContain('max-h-[calc(100vh-6rem)]');
     expect(compiled.querySelector('app-analysis')).toBeTruthy();
     expect(compiled.querySelector('app-info-panel')).toBeTruthy();
   });
