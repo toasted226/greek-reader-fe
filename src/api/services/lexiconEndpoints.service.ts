@@ -121,10 +121,10 @@ export class LexiconEndpointsService {
         });
     }
 
-    lemmasGet(partOfSpeech?: string, lemma?: string, form?: string, example?: string, featureList?: FeatureListParam, minDate?: Date, maxDate?: Date, latest?: boolean, observe?: 'body', options?: RequestOptions<'json'>): Observable<Array<UserLemmaResponse>>;
-    lemmasGet(partOfSpeech?: string, lemma?: string, form?: string, example?: string, featureList?: FeatureListParam, minDate?: Date, maxDate?: Date, latest?: boolean, observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<Array<UserLemmaResponse>>>;
-    lemmasGet(partOfSpeech?: string, lemma?: string, form?: string, example?: string, featureList?: FeatureListParam, minDate?: Date, maxDate?: Date, latest?: boolean, observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<Array<UserLemmaResponse>>>;
-    lemmasGet(partOfSpeech?: string, lemma?: string, form?: string, example?: string, featureList?: FeatureListParam, minDate?: Date, maxDate?: Date, latest?: boolean, observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
+    lemmasGet(partOfSpeech?: string, lemma?: string, form?: string, example?: string, featureList?: FeatureListParam, minDate?: string, maxDate?: string, latest?: boolean, observe?: 'body', options?: RequestOptions<'json'>): Observable<Array<UserLemmaResponse>>;
+    lemmasGet(partOfSpeech?: string, lemma?: string, form?: string, example?: string, featureList?: FeatureListParam, minDate?: string, maxDate?: string, latest?: boolean, observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<Array<UserLemmaResponse>>>;
+    lemmasGet(partOfSpeech?: string, lemma?: string, form?: string, example?: string, featureList?: FeatureListParam, minDate?: string, maxDate?: string, latest?: boolean, observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<Array<UserLemmaResponse>>>;
+    lemmasGet(partOfSpeech?: string, lemma?: string, form?: string, example?: string, featureList?: FeatureListParam, minDate?: string, maxDate?: string, latest?: boolean, observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
         const url = `${this.basePath}/lemmas`;
 
         let params = new HttpParams();

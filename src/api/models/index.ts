@@ -47,7 +47,7 @@ export interface FileMetadataResponse {
     originalFileName?: string;
     displayName?: string;
     fileSizeBytes?: number | string;
-    uploadedAt?: Date;
+    uploadedAt?: string;
 }
 
 export interface FormResponse {
@@ -78,7 +78,7 @@ export interface LemmaResponse {
 export interface MeResponse {
     id: number | string;
     email: string;
-    createdAt: Date | null;
+    createdAt: string | null;
 }
 
 export interface ProblemDetails {

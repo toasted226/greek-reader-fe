@@ -13,4 +13,3 @@ export * from "./providers";
 export * from "./services";
 export * from "./utils/file-download";
 export * from "./utils/http-params-builder";
-export * from "./utils/date-transformer";

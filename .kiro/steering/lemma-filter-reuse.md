@@ -181,7 +181,7 @@ export const LEMMA_QUERY_SOURCE = new InjectionToken<LemmaQuerySource>('LEMMA_QU
 
 Move the current `fetchLemmas()` body (`saved-words-filter.service.ts`) here.
 
-- Keeps building `HttpParams` by hand — **only because of the dates** (see the wire-format table below).
+- Calls `LexiconEndpointsService.lemmasGet(...)`; no hand-built `HttpParams`. Dates are formatted `YYYY-MM-DD` because the client is generated with `dateType: 'string'` (see `openapi.config.ts`).
 - Maps `UserLemmaResponse` → `LemmaResult` (`key: String(saved.id)`, `contextSentence: saved.contextSentence`).
 - `supports: { dates: true, example: true, latest: true }`.
 
@@ -294,7 +294,7 @@ Also handle features the API returns that are **not** in `ALL_FEATURES`: they wo
 | `latest` | `true` / `false` | Saved words only — not a global-search filter. Only sent when true today. |
 | text params | as-is | `partOfSpeech`, `lemma`, `form`, `example`. |
 
-**Do not route dates through the generated client.** `HttpParamsBuilder.handleDate()` emits a full ISO datetime (`minDate=2026-11-01T00:00:00.000Z`), which is not the declared `format: date`. That is the sole remaining reason the saved-words source builds `HttpParams` by hand. The global source has no dates, so it can use the generated client directly.
+**Dates go through the generated client as strings.** `src/api` is generated with `dateType: 'string'` (see `openapi.config.ts`), so `lemmasGet`-style date parameters are typed `string` and accept the declared `format: date` value directly (`minDate=2026-11-01`). Do not switch the generator back to `dateType: 'Date'`: `HttpParamsBuilder.handleDate()` would emit a full ISO datetime (`minDate=2026-11-01T00:00:00.000Z`) to a `DateOnly` parameter.
 
 Feature keys in `filter-features.ts` (`masculine`, `first-person`, …) match the `features` strings the API returns on forms, so no mapping layer is needed.
 

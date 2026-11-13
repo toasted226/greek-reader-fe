@@ -92,7 +92,7 @@ export class FileAnalyserComponent implements OnInit {
       displayName: f.displayName ?? f.originalFileName ?? 'Untitled',
       originalFileName: f.originalFileName ?? '',
       fileSizeBytes: Number(f.fileSizeBytes ?? 0),
-      uploadedAt: f.uploadedAt,
+      uploadedAt: f.uploadedAt ? new Date(f.uploadedAt) : undefined,
     };
   }
 
