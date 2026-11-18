@@ -1,0 +1,100 @@
+<section class="flex w-full flex-col gap-6">
+  <header class="flex flex-col gap-1">
+    <h1 class="text-[30px] font-bold leading-9.5 text-text-primary">Dictionary</h1>
+    <p class="text-[15px] leading-5.5 text-text-secondary">Browse Greek lemmas from the lexicon</p>
+  </header>
+
+  <app-lemma-filter
+    [showDates]="false"
+    [showLatest]="false"
+    exampleLabel="Example sentences"
+    examplePlaceholder="Search example sentences…"
+  />
+
+  @if (filterService.loading()) {
+    <p class="text-text-secondary" role="status">Loading lemmas…</p>
+  } @else if (filterService.loadError()) {
+    <div
+      class="flex items-center gap-3 rounded-xl border border-border-default bg-surface-card p-4"
+    >
+      <p class="text-text-secondary">Lemmas could not be loaded.</p>
+      <button
+        type="button"
+        class="font-medium text-brand-primary hover:underline"
+        (click)="filterService.refresh()"
+      >
+        Try again
+      </button>
+    </div>
+  } @else if (filterService.items().length === 0) {
+    <p class="rounded-xl border border-border-default bg-surface-card p-4 text-text-secondary">
+      @if (filterService.hasActiveFilters()) {
+        No lemmas match the current filters.
+      } @else {
+        No lemmas found.
+      }
+    </p>
+  } @else {
+    <nav
+      aria-label="Dictionary pages"
+      class="flex items-center justify-between gap-3 rounded-xl border border-border-default bg-surface-card px-4 py-2"
+    >
+      <p class="text-sm text-text-secondary" aria-live="polite">
+        {{ filterService.firstItemNumber() }}–{{ filterService.lastItemNumber() }} of
+        {{ filterService.total() }}
+      </p>
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          class="rounded-lg border border-border-default px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-surface-sunken focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:cursor-not-allowed disabled:opacity-40"
+          [disabled]="!filterService.canGoPrevious()"
+          (click)="previous()"
+        >
+          Previous
+        </button>
+        <button
+          type="button"
+          class="rounded-lg border border-border-default px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-surface-sunken focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:cursor-not-allowed disabled:opacity-40"
+          [disabled]="!filterService.canGoNext()"
+          (click)="next()"
+        >
+          Next
+        </button>
+      </div>
+    </nav>
+
+    <div class="flex flex-col gap-4">
+      @for (lemma of filterService.items(); track lemma.id) {
+        <app-lemma-item [lemma]="lemma" [contextSentence]="''" />
+      }
+    </div>
+
+    <nav
+      aria-label="Dictionary pages"
+      class="flex items-center justify-between gap-3 rounded-xl border border-border-default bg-surface-card px-4 py-2"
+    >
+      <p class="text-sm text-text-secondary" aria-live="polite">
+        {{ filterService.firstItemNumber() }}–{{ filterService.lastItemNumber() }} of
+        {{ filterService.total() }}
+      </p>
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          class="rounded-lg border border-border-default px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-surface-sunken focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:cursor-not-allowed disabled:opacity-40"
+          [disabled]="!filterService.canGoPrevious()"
+          (click)="previous()"
+        >
+          Previous
+        </button>
+        <button
+          type="button"
+          class="rounded-lg border border-border-default px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-surface-sunken focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:cursor-not-allowed disabled:opacity-40"
+          [disabled]="!filterService.canGoNext()"
+          (click)="next()"
+        >
+          Next
+        </button>
+      </div>
+    </nav>
+  }
+</section>

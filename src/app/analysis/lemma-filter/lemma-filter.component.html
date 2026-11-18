@@ -1,14 +1,9 @@
 <div class="flex flex-col gap-3 rounded-xl border border-border-default bg-surface-card p-4">
-
   <!-- Primary filter row -->
   <div class="flex flex-wrap items-end gap-3">
-
     <!-- Lemma search -->
     <div class="flex min-w-36 flex-1 flex-col gap-1">
-      <label
-        for="filter-lemma"
-        class="text-xs font-medium text-text-secondary"
-      >
+      <label [for]="fieldId('lemma')" class="text-xs font-medium text-text-secondary">
         Lemma
       </label>
       <div class="relative">
@@ -25,7 +20,7 @@
           />
         </svg>
         <input
-          id="filter-lemma"
+          [id]="fieldId('lemma')"
           type="search"
           class="w-full rounded-lg border border-border-default bg-surface-page py-1.5 pl-8 pr-3 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
           placeholder="Search headword…"
@@ -41,10 +36,7 @@
 
     <!-- Form search -->
     <div class="flex min-w-36 flex-1 flex-col gap-1">
-      <label
-        for="filter-form"
-        class="text-xs font-medium text-text-secondary"
-      >
+      <label [for]="fieldId('form')" class="text-xs font-medium text-text-secondary">
         Inflected form
       </label>
       <div class="relative">
@@ -61,7 +53,7 @@
           />
         </svg>
         <input
-          id="filter-form"
+          [id]="fieldId('form')"
           type="search"
           class="w-full rounded-lg border border-border-default bg-surface-page py-1.5 pl-8 pr-3 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
           placeholder="Search inflected form…"
@@ -77,14 +69,11 @@
 
     <!-- Part of speech select -->
     <div class="flex min-w-36 flex-col gap-1">
-      <label
-        for="filter-pos"
-        class="text-xs font-medium text-text-secondary"
-      >
+      <label [for]="fieldId('pos')" class="text-xs font-medium text-text-secondary">
         Part of speech
       </label>
       <select
-        id="filter-pos"
+        [id]="fieldId('pos')"
         class="filter-select rounded-lg border border-border-default bg-surface-page py-1.5 pl-3 pr-8 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
         [value]="filterService.partOfSpeech() ?? ''"
         (change)="onPosChange($any($event.target).value)"
@@ -97,28 +86,30 @@
       </select>
     </div>
 
-    <!-- Latest toggle -->
-    <label
-      class="flex cursor-pointer select-none items-center gap-2 self-end pb-1.5 text-sm text-text-primary"
-    >
-      <span class="relative inline-flex items-center">
-        <input
-          type="checkbox"
-          class="peer sr-only"
-          [checked]="filterService.latest()"
-          (change)="onLatestChange($any($event.target).checked)"
-        />
-        <!-- Track -->
-        <span
-          class="h-5 w-9 rounded-full border border-border-default bg-surface-sunken transition-colors peer-checked:border-brand-primary peer-checked:bg-brand-primary peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-primary"
-        ></span>
-        <!-- Thumb -->
-        <span
-          class="absolute left-0.5 top-0.5 size-4 rounded-full bg-surface-card shadow-sm transition-transform peer-checked:translate-x-4"
-        ></span>
-      </span>
-      Latest
-    </label>
+    <!-- Latest toggle (saved words only) -->
+    @if (showLatest()) {
+      <label
+        class="flex cursor-pointer select-none items-center gap-2 self-end pb-1.5 text-sm text-text-primary"
+      >
+        <span class="relative inline-flex items-center">
+          <input
+            type="checkbox"
+            class="peer sr-only"
+            [checked]="filterService.latest()"
+            (change)="onLatestChange($any($event.target).checked)"
+          />
+          <!-- Track -->
+          <span
+            class="h-5 w-9 rounded-full border border-border-default bg-surface-sunken transition-colors peer-checked:border-brand-primary peer-checked:bg-brand-primary peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-primary"
+          ></span>
+          <!-- Thumb -->
+          <span
+            class="absolute left-0.5 top-0.5 size-4 rounded-full bg-surface-card shadow-sm transition-transform peer-checked:translate-x-4"
+          ></span>
+        </span>
+        Latest
+      </label>
+    }
 
     <!-- More filters toggle -->
     <button
@@ -126,7 +117,7 @@
       class="flex items-center gap-1.5 self-end pb-1.5 text-sm font-medium text-brand-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
       (click)="showMore.set(!showMore())"
       [attr.aria-expanded]="showMore()"
-      aria-controls="filter-more"
+      [attr.aria-controls]="fieldId('more')"
     >
       {{ showMore() ? 'Fewer filters' : 'More filters' }}
       <svg
@@ -143,47 +134,48 @@
         />
       </svg>
     </button>
-
-  </div><!-- /primary row -->
+  </div>
+  <!-- /primary row -->
 
   <!-- Secondary "more filters" section -->
   @if (showMore()) {
     <div
-      id="filter-more"
+      [id]="fieldId('more')"
       class="flex flex-col gap-4 border-t border-border-default pt-3"
       aria-label="Additional filters"
     >
-
-      <!-- Date range -->
-      <div class="flex flex-wrap items-end gap-3">
-        <div class="flex flex-col gap-1">
-          <label for="filter-min-date" class="text-xs font-medium text-text-secondary">
-            Saved from
-          </label>
-          <input
-            id="filter-min-date"
-            type="date"
-            class="rounded-lg border border-border-default bg-surface-page px-3 py-1.5 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
-            [value]="dateToInputValue(filterService.minDate())"
-            (change)="onMinDateChange($any($event.target).value)"
-            aria-label="Saved from date"
-          />
+      <!-- Date range (saved words only) -->
+      @if (showDates()) {
+        <div class="flex flex-wrap items-end gap-3">
+          <div class="flex flex-col gap-1">
+            <label [for]="fieldId('min-date')" class="text-xs font-medium text-text-secondary">
+              Saved from
+            </label>
+            <input
+              [id]="fieldId('min-date')"
+              type="date"
+              class="rounded-lg border border-border-default bg-surface-page px-3 py-1.5 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
+              [value]="dateToInputValue(filterService.minDate())"
+              (change)="onMinDateChange($any($event.target).value)"
+              aria-label="Saved from date"
+            />
+          </div>
+          <span class="self-end pb-2 text-sm text-text-secondary">to</span>
+          <div class="flex flex-col gap-1">
+            <label [for]="fieldId('max-date')" class="text-xs font-medium text-text-secondary">
+              Saved to
+            </label>
+            <input
+              [id]="fieldId('max-date')"
+              type="date"
+              class="rounded-lg border border-border-default bg-surface-page px-3 py-1.5 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
+              [value]="dateToInputValue(filterService.maxDate())"
+              (change)="onMaxDateChange($any($event.target).value)"
+              aria-label="Saved to date"
+            />
+          </div>
         </div>
-        <span class="self-end pb-2 text-sm text-text-secondary">to</span>
-        <div class="flex flex-col gap-1">
-          <label for="filter-max-date" class="text-xs font-medium text-text-secondary">
-            Saved to
-          </label>
-          <input
-            id="filter-max-date"
-            type="date"
-            class="rounded-lg border border-border-default bg-surface-page px-3 py-1.5 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
-            [value]="dateToInputValue(filterService.maxDate())"
-            (change)="onMaxDateChange($any($event.target).value)"
-            aria-label="Saved to date"
-          />
-        </div>
-      </div>
+      }
 
       <!-- Feature chips -->
       <div class="flex flex-col gap-2">
@@ -192,7 +184,9 @@
           @if (filterService.partOfSpeech()) {
             <span class="ml-1 font-normal">
               — greyed-out features do not apply to
-              <strong class="font-medium">{{ posLabels[filterService.partOfSpeech()!] ?? filterService.partOfSpeech() }}</strong>
+              <strong class="font-medium">{{
+                posLabels[filterService.partOfSpeech()!] ?? filterService.partOfSpeech()
+              }}</strong>
             </span>
           }
         </span>
@@ -223,8 +217,8 @@
 
       <!-- Example / context sentence search -->
       <div class="flex flex-col gap-1">
-        <label for="filter-example" class="text-xs font-medium text-text-secondary">
-          Context sentence
+        <label [for]="fieldId('example')" class="text-xs font-medium text-text-secondary">
+          {{ exampleLabel() }}
         </label>
         <div class="relative">
           <svg
@@ -240,21 +234,20 @@
             />
           </svg>
           <input
-            id="filter-example"
+            [id]="fieldId('example')"
             type="search"
             class="w-full rounded-lg border border-border-default bg-surface-page py-1.5 pl-8 pr-3 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
-            placeholder="Search within saved context sentences…"
+            [placeholder]="examplePlaceholder()"
             [value]="filterService.exampleSearch()"
             (input)="onExampleInput($any($event.target).value)"
-            aria-label="Filter by context sentence text"
+            [attr.aria-label]="'Filter by ' + exampleLabel() + ' text'"
             autocomplete="off"
             autocorrect="off"
             spellcheck="false"
           />
         </div>
       </div>
-
-    </div><!-- /more filters -->
+    </div>
+    <!-- /more filters -->
   }
-
 </div>

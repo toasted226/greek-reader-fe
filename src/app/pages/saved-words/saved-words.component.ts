@@ -1,7 +1,8 @@
 import { Component, computed, inject } from '@angular/core';
 import { POS_LABELS, featureLabel } from '../../analysis/filter-features';
 import { LemmaItem } from '../../analysis/lemma-item/lemma-item';
-import { SavedWordsFilterComponent } from './saved-words-filter/saved-words-filter.component';
+import { LemmaFilterComponent } from '../../analysis/lemma-filter/lemma-filter.component';
+import { LemmaFilterState } from '../../analysis/lemma-filter/lemma-filter-state';
 import { SavedWordsFilterService } from './saved-words-filter.service';
 
 export interface ActiveFilterPill {
@@ -15,7 +16,12 @@ export interface ActiveFilterPill {
 
 @Component({
   selector: 'app-saved-words',
-  imports: [LemmaItem, SavedWordsFilterComponent],
+  imports: [LemmaItem, LemmaFilterComponent],
+  // The shared filter component injects the abstract base; bind it to the
+  // saved-words service. No page-level instance is created — this alias
+  // resolves to the existing root singleton, so filter state still persists
+  // across navigation exactly as before.
+  providers: [{ provide: LemmaFilterState, useExisting: SavedWordsFilterService }],
   templateUrl: './saved-words.component.html',
   host: {
     class: 'block w-full',
@@ -33,7 +39,10 @@ export class SavedWordsComponent {
       pills.push({
         id: 'lemma',
         label: `Lemma: "${fs.lemmaSearch()}"`,
-        remove: () => { fs.lemmaSearch.set(''); fs.lemmaInput$.next(''); },
+        remove: () => {
+          fs.lemmaSearch.set('');
+          fs.lemmaInput$.next('');
+        },
       });
     }
 
@@ -41,7 +50,10 @@ export class SavedWordsComponent {
       pills.push({
         id: 'form',
         label: `Form: "${fs.formSearch()}"`,
-        remove: () => { fs.formSearch.set(''); fs.formInput$.next(''); },
+        remove: () => {
+          fs.formSearch.set('');
+          fs.formInput$.next('');
+        },
       });
     }
 
@@ -90,7 +102,10 @@ export class SavedWordsComponent {
       pills.push({
         id: 'example',
         label: `Context: "${fs.exampleSearch()}"`,
-        remove: () => { fs.exampleSearch.set(''); fs.exampleInput$.next(''); },
+        remove: () => {
+          fs.exampleSearch.set('');
+          fs.exampleInput$.next('');
+        },
       });
     }
 

@@ -44,6 +44,10 @@
             <mat-icon matListItemIcon class="text-inherit">bookmark</mat-icon>
             <span class="opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">Saved Words</span>
           </a>
+          <a mat-list-item routerLink="/dashboard/dictionary" routerLinkActive="bg-brand-soft! text-brand-primary!" class="flex items-center text-text-secondary hover:text-text-primary hover:bg-surface-sunken transition-colors">
+            <mat-icon matListItemIcon class="text-inherit">auto_stories</mat-icon>
+            <span class="opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">Dictionary</span>
+          </a>
           <a mat-list-item routerLink="/dashboard/settings" routerLinkActive="bg-brand-soft! text-brand-primary!" class="flex items-center text-text-secondary hover:text-text-primary hover:bg-surface-sunken transition-colors">
             <mat-icon matListItemIcon class="text-inherit">settings</mat-icon>
             <span class="opacity-100 transition-opacity duration-200 whitespace-nowrap text-sm font-medium">Settings</span>
@@ -78,18 +82,18 @@
 
   <nav
     aria-label="Main navigation"
-    class="mobile-bottom-nav flex shrink-0 justify-around border-t border-border-default bg-surface-card px-2 pt-1 pb-[calc(0.25rem_+_env(safe-area-inset-bottom))] shadow-lg md:hidden"
+    class="mobile-bottom-nav flex shrink-0 justify-around border-t border-border-default bg-surface-card px-2 pt-1 pb-[calc(0.25rem+env(safe-area-inset-bottom))] shadow-lg md:hidden"
   >
     <a
       mat-button
       routerLink="/dashboard/analyse"
       routerLinkActive="bg-brand-soft!"
       ariaCurrentWhenActive="page"
-      class="group min-h-[3.75rem] min-w-0 flex-1 rounded-xl px-0.5 py-1 leading-none !text-text-primary hover:bg-surface-sunken"
+      class="group min-h-[3.75rem] min-w-0 flex-1 rounded-xl px-0.5 py-1 leading-none text-text-primary! hover:bg-surface-sunken"
     >
       <span class="flex w-full flex-col items-center justify-center gap-0.5">
-        <mat-icon class="!m-0 !size-6 !self-center !text-xl !text-text-primary group-aria-[current=page]:!text-brand-primary">menu_book</mat-icon>
-        <span class="!mt-1 !text-text-primary text-[0.6875rem] font-medium leading-4">Analyse</span>
+        <mat-icon class="m-0! size-6! self-center! text-xl! text-text-primary!">menu_book</mat-icon>
+        <span class="mt-1! text-text-primary! text-[0.6875rem] font-medium leading-4">Analyse</span>
       </span>
     </a>
     <a
@@ -97,11 +101,11 @@
       routerLink="/dashboard/file-analyser"
       routerLinkActive="bg-brand-soft!"
       ariaCurrentWhenActive="page"
-      class="group min-h-[3.75rem] min-w-0 flex-1 rounded-xl px-0.5 py-1 leading-none !text-text-primary hover:bg-surface-sunken"
+      class="group min-h-[3.75rem] min-w-0 flex-1 rounded-xl px-0.5 py-1 leading-none text-text-primary! hover:bg-surface-sunken"
     >
       <span class="flex w-full flex-col items-center justify-center gap-0.5">
-        <mat-icon class="!m-0 !size-6 !self-center !text-xl !text-text-primary group-aria-[current=page]:!text-brand-primary">upload_file</mat-icon>
-        <span class="!mt-1 !text-text-primary text-[0.6875rem] font-medium leading-4">Files</span>
+        <mat-icon class="m-0! size-6! self-center! text-xl! text-text-primary!">upload_file</mat-icon>
+        <span class="mt-1! text-text-primary! text-[0.6875rem] font-medium leading-4">Files</span>
       </span>
     </a>
     <a
@@ -109,11 +113,23 @@
       routerLink="/dashboard/lemmas"
       routerLinkActive="bg-brand-soft!"
       ariaCurrentWhenActive="page"
-      class="group min-h-[3.75rem] min-w-0 flex-1 rounded-xl px-0.5 py-1 leading-none !text-text-primary hover:bg-surface-sunken"
+      class="group min-h-[3.75rem] min-w-0 flex-1 rounded-xl px-0.5 py-1 leading-none text-text-primary! hover:bg-surface-sunken"
     >
       <span class="flex w-full flex-col items-center justify-center gap-0.5">
-        <mat-icon class="!m-0 !size-6 !self-center !text-xl !text-text-primary group-aria-[current=page]:!text-brand-primary">bookmark</mat-icon>
-        <span class="!mt-1 !text-text-primary text-[0.6875rem] font-medium leading-4">Saved</span>
+        <mat-icon class="m-0! size-6! self-center! text-xl! text-text-primary!">bookmark</mat-icon>
+        <span class="mt-1! text-text-primary! text-[0.6875rem] font-medium leading-4">Saved</span>
+      </span>
+    </a>
+    <a
+      mat-button
+      routerLink="/dashboard/dictionary"
+      routerLinkActive="bg-brand-soft!"
+      ariaCurrentWhenActive="page"
+      class="group min-h-[3.75rem] min-w-0 flex-1 rounded-xl px-0.5 py-1 leading-none text-text-primary! hover:bg-surface-sunken"
+    >
+      <span class="flex w-full flex-col items-center justify-center gap-0.5">
+        <mat-icon class="m-0 size-6 self-center text-xl group-aria-[current=page]:text-brand-primary">auto_stories</mat-icon>
+        <span class="mt-1 text-text-primary text-[0.6875rem] font-medium leading-4">Dictionary</span>
       </span>
     </a>
     <a
@@ -121,11 +137,11 @@
       routerLink="/dashboard/settings"
       routerLinkActive="bg-brand-soft!"
       ariaCurrentWhenActive="page"
-      class="group min-h-[3.75rem] min-w-0 flex-1 rounded-xl px-0.5 py-1 leading-none !text-text-primary hover:bg-surface-sunken"
+      class="group min-h-[3.75rem] min-w-0 flex-1 rounded-xl px-0.5 py-1 leading-none text-text-primary hover:bg-surface-sunken"
     >
       <span class="flex w-full flex-col items-center justify-center gap-0.5">
-        <mat-icon class="!m-0 !size-6 !self-center !text-xl !text-text-primary group-aria-[current=page]:!text-brand-primary">settings</mat-icon>
-        <span class="!mt-1 !text-text-primary text-[0.6875rem] font-medium leading-4">Settings</span>
+        <mat-icon class="m-0 size-6 self-center text-xl text-text-primary">settings</mat-icon>
+        <span class="mt-1 text-text-primary text-[0.6875rem] font-medium leading-4">Settings</span>
       </span>
     </a>
   </nav>

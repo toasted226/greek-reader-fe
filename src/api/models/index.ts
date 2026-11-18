@@ -66,6 +66,13 @@ export interface HttpValidationProblemDetails {
 
 export type IFormFile = Blob;
 
+export interface LemmaPageResponse {
+    items: Array<LemmaResponse>;
+    offset: number | string;
+    limit: number | string;
+    total: number | string;
+}
+
 export interface LemmaResponse {
     id: number | string;
     lemma: string;
