@@ -41,6 +41,11 @@ export const routes: Routes = [
           import('./pages/saved-words/saved-words.component').then((m) => m.SavedWordsComponent),
       },
       {
+        path: 'dictionary',
+        loadComponent: () =>
+          import('./pages/dictionary/dictionary.component').then((m) => m.DictionaryComponent),
+      },
+      {
         path: 'settings',
         loadComponent: () =>
           import('./pages/settings/settings.component').then((m) => m.SettingsComponent),

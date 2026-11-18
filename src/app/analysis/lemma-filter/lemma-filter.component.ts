@@ -1,19 +1,52 @@
 import { NgClass } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { POS_LABELS, POS_VALUES } from '../../../analysis/filter-features';
-import { SavedWordsFilterService } from '../saved-words-filter.service';
+import { POS_LABELS, POS_VALUES } from '../filter-features';
+import { LemmaFilterState } from './lemma-filter-state';
+
+/** Monotonic per-instance counter backing `LemmaFilterComponent.uid`. */
+let nextFilterUid = 0;
 
 @Component({
-  selector: 'app-saved-words-filter',
+  selector: 'app-lemma-filter',
   imports: [FormsModule, NgClass],
-  templateUrl: './saved-words-filter.component.html',
+  templateUrl: './lemma-filter.component.html',
   host: {
     class: 'block',
   },
 })
-export class SavedWordsFilterComponent {
-  protected readonly filterService = inject(SavedWordsFilterService);
+export class LemmaFilterComponent {
+  /**
+   * Whether the saved-on date range is shown. Dates are a per-user
+   * saved-words concept; the global lexicon endpoint has no equivalent.
+   */
+  readonly showDates = input(true);
+
+  /**
+   * Whether the "Latest" toggle is shown. `latest` applies to saved words
+   * only — it does not exist as a global lexicon filter.
+   */
+  readonly showLatest = input(true);
+
+  /** Label above the example/context search input. */
+  readonly exampleLabel = input('Context sentence');
+
+  /** Placeholder inside the example/context search input. */
+  readonly examplePlaceholder = input('Search within saved context sentences…');
+
+  protected readonly filterService = inject(LemmaFilterState);
+
+  /**
+   * Per-instance prefix for generated DOM ids, so two instances of this
+   * component on one page never produce duplicate ids (which would break
+   * `<label for>` and `aria-controls`).
+   */
+  protected readonly uid = `lemma-filter-${nextFilterUid++}`;
+
+  /** Unique DOM id for a named field within this instance. */
+  protected fieldId(field: string): string {
+    return `${this.uid}-${field}`;
+  }
 
   protected readonly posValues = POS_VALUES;
   protected readonly posLabels = POS_LABELS;

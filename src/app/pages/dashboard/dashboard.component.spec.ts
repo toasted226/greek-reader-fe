@@ -61,10 +61,12 @@ describe('DashboardComponent', () => {
     expect(compiled.textContent).toContain('Text Analyser');
     expect(compiled.textContent).toContain('File Analyser');
     expect(compiled.textContent).toContain('Saved Words');
+    expect(compiled.textContent).toContain('Dictionary');
     expect(compiled.textContent).toContain('Settings');
     expect(compiled.textContent).toContain('Sign out');
     expect(compiled.querySelector('a[routerLink="/dashboard/file-analyser"]')).toBeTruthy();
     expect(compiled.querySelector('a[routerLink="/dashboard/lemmas"]')).toBeTruthy();
+    expect(compiled.querySelector('a[routerLink="/dashboard/dictionary"]')).toBeTruthy();
     expect(compiled.querySelector('a[routerLink="/dashboard/settings"]')).toBeTruthy();
   });
 
@@ -78,9 +80,11 @@ describe('DashboardComponent', () => {
     expect(mobileNav?.textContent).toContain('Analyse');
     expect(mobileNav?.textContent).toContain('Files');
     expect(mobileNav?.textContent).toContain('Saved');
+    expect(mobileNav?.textContent).toContain('Dictionary');
     expect(mobileNav?.textContent).toContain('Settings');
     expect(mobileNav?.querySelector('a[routerLink="/dashboard/file-analyser"]')).toBeTruthy();
     expect(mobileNav?.querySelector('a[routerLink="/dashboard/lemmas"]')).toBeTruthy();
+    expect(mobileNav?.querySelector('a[routerLink="/dashboard/dictionary"]')).toBeTruthy();
     expect(mobileNav?.querySelector('a[routerLink="/dashboard/settings"]')).toBeTruthy();
   });
 });

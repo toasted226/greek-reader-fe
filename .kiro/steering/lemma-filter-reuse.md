@@ -1,6 +1,6 @@
 # Lemma Filter — Reuse for Global Lemma Search
 
-**Status:** design agreed, not implemented.
+**Status:** the Dictionary page exists (`/dashboard/dictionary`) with unfiltered, paginated browsing; filter reuse is designed but not implemented.
 **Owner of the backend half:** the API author (adding filters to `GET /lexicon/query`).
 **Read this together with:** `.kiro/steering/saved-words-filter.md` (the original saved-words build-out).
 
@@ -17,7 +17,7 @@ One filter UI + one filter state model, reused for two search surfaces:
 
 The global endpoint is being extended to accept the same filters **except** `minDate`/`maxDate` (saved-on dates), `example` (context sentence) and `latest` — all three are per-user saved-word concepts. Confirmed: `latest` will **not** exist as a filter for global lemma search.
 
-Nothing in this document has been implemented yet.
+The Dictionary page shell and pagination are implemented; the filter reuse design below is not.
 
 ---
 

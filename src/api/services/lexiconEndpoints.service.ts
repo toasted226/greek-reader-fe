@@ -12,7 +12,7 @@ import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from "../tokens";
 import { HttpParamsBuilder } from "../utils/http-params-builder";
-import { RequestOptions, LemmaResponse, AnalyseRequest, AnalyseResponse, FeaturesResponse, FeatureListParam, UserLemmaResponse, CreateUserLemmaRequest, FileMetadataResponse, IFormFile, UploadFileResponse } from "../models";
+import { FeatureListParam, RequestOptions, LemmaPageResponse, AnalyseRequest, AnalyseResponse, FeaturesResponse, UserLemmaResponse, CreateUserLemmaRequest, FileMetadataResponse, IFormFile, UploadFileResponse } from "../models";
 
 @Injectable({ providedIn: "root" })
 export class LexiconEndpointsService {
@@ -25,15 +25,44 @@ export class LexiconEndpointsService {
         return context.set(this.clientContextToken, 'default');
     }
 
-    lexiconQueryGet(form: string, observe?: 'body', options?: RequestOptions<'json'>): Observable<Array<LemmaResponse>>;
-    lexiconQueryGet(form: string, observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<Array<LemmaResponse>>>;
-    lexiconQueryGet(form: string, observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<Array<LemmaResponse>>>;
-    lexiconQueryGet(form: string, observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
+    lexiconQueryGet(partOfSpeech?: string, lemma?: string, form?: string, formContains?: string, example?: string, featureList?: FeatureListParam, offset?: number | string, limit?: number | string, observe?: 'body', options?: RequestOptions<'json'>): Observable<LemmaPageResponse>;
+    lexiconQueryGet(partOfSpeech?: string, lemma?: string, form?: string, formContains?: string, example?: string, featureList?: FeatureListParam, offset?: number | string, limit?: number | string, observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<LemmaPageResponse>>;
+    lexiconQueryGet(partOfSpeech?: string, lemma?: string, form?: string, formContains?: string, example?: string, featureList?: FeatureListParam, offset?: number | string, limit?: number | string, observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<LemmaPageResponse>>;
+    /**
+     * Returns a page of lemmas from the lexicon. All filters are optional;
+     * omitting every filter browses the whole lexicon in lemma order. Matching
+     * is case-insensitive. The form filters are normalised through the
+     * morphology engine, so accents, case, and final sigma do not matter.
+     * Lemma and example text is matched literally, so accents are significant
+     * there. A filter that matches nothing returns an empty page, not a 404.
+     */
+    lexiconQueryGet(partOfSpeech?: string, lemma?: string, form?: string, formContains?: string, example?: string, featureList?: FeatureListParam, offset?: number | string, limit?: number | string, observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
         const url = `${this.basePath}/lexicon/query`;
 
         let params = new HttpParams();
+        if (partOfSpeech != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, partOfSpeech, 'partOfSpeech');
+        }
+        if (lemma != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, lemma, 'lemma');
+        }
         if (form != null) {
             params = HttpParamsBuilder.addToHttpParams(params, form, 'form');
+        }
+        if (formContains != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, formContains, 'formContains');
+        }
+        if (example != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, example, 'example');
+        }
+        if (featureList != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, featureList, 'featureList');
+        }
+        if (offset != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, offset, 'offset');
+        }
+        if (limit != null) {
+            params = HttpParamsBuilder.addToHttpParams(params, limit, 'limit');
         }
 
         let headers: HttpHeaders;
