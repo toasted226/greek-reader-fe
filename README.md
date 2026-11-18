@@ -1,8 +1,8 @@
 # GreekReader
 
-The Angular-powered frontend for #[the Greek Reader API](https://github.com/toasted226/greek-reader-api). You can find find more information about how the Greek Reader project works there.
+The Angular-powered frontend for [the Greek Reader API](https://github.com/toasted226/greek-reader-api). You can find find more information about how the Greek Reader project works there.
 
-This site is live and hosted at https://greek-reader.modulrza.app, featuring morphological text-analysis, file uploads, dictionary searching, and user-saved lemmas. A react native app and a native #[Iced](https://github.com/iced-rs/iced)-based Rust desktop client is in progress but not yet published.
+This site is live and hosted at https://greek-reader.modulrza.app, featuring morphological text-analysis, file uploads, dictionary searching, and user-saved lemmas. A react native app and a native [Iced](https://github.com/iced-rs/iced)-based Rust desktop client is in progress but not yet published.
 
 ## License
 
