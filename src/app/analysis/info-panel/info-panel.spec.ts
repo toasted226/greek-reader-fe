@@ -3,6 +3,7 @@ import { InfoPanel } from './info-panel';
 import { AnalysisService } from '../analysis.service';
 import { AnalyseResponse } from '../../../api/models';
 import { SavedLemmasService } from '../saved-lemmas.service';
+import { expandExamples, getExamplesToggle } from '../testing/disclosures';
 
 describe('InfoPanel', () => {
   let component: InfoPanel;
@@ -21,9 +22,7 @@ describe('InfoPanel', () => {
           { form: 'σκύλος', features: ['nom', 'masc', 'sg'] },
           { form: 'σκύλου', features: ['gen', 'masc', 'sg'] },
         ],
-        examples: [
-          { greek: 'Ο σκύλος γαβγίζει.', english: 'The dog barks.' },
-        ],
+        examples: [{ greek: 'Ο σκύλος γαβγίζει.', english: 'The dog barks.' }],
       },
     ],
   };
@@ -87,6 +86,15 @@ describe('InfoPanel', () => {
     expect(compiled.textContent).toContain('Noun');
     expect(compiled.textContent).toContain('dog, hound');
     expect(compiled.textContent).toContain('nom, masc, sg');
+    // Examples are collapsed by default and expand on click.
+    expect(compiled.textContent).toContain('Examples');
+    const examplesToggle = getExamplesToggle(compiled);
+    expect(examplesToggle.getAttribute('aria-expanded')).toBe('false');
+    expect(compiled.textContent).not.toContain('Ο σκύλος γαβγίζει.');
+
+    expandExamples(fixture);
+
+    expect(examplesToggle.getAttribute('aria-expanded')).toBe('true');
     expect(compiled.textContent).toContain('Ο σκύλος γαβγίζει.');
     expect(compiled.textContent).toContain('The dog barks.');
   });

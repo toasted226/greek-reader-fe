@@ -13,11 +13,11 @@ describe('Adjective', () => {
     glosses: ['good', 'beautiful'],
     forms: [
       { form: 'καλός', features: ['masculine', 'nominative', 'singular', 'positive'] },
-      { form: 'καλοῦ', features: ['masculine', 'genitive', 'singular', 'positive'] },
+      { form: 'καλού', features: ['masculine', 'genitive', 'singular', 'positive'] },
       { form: 'καλοί', features: ['masculine', 'nominative', 'plural', 'positive'] },
       { form: 'καλή', features: ['feminine', 'nominative', 'singular', 'positive'] },
-      { form: 'καλόν', features: ['neuter', 'nominative', 'singular', 'positive'] },
-      { form: 'καλλίων', features: ['masculine', 'nominative', 'singular', 'comparative'] },
+      { form: 'καλό', features: ['neuter', 'nominative', 'singular', 'positive'] },
+      { form: 'καλύτερος', features: ['masculine', 'nominative', 'singular', 'comparative'] },
       { form: 'κάλλιστος', features: ['masculine', 'nominative', 'singular', 'superlative'] },
     ],
     examples: [],
@@ -69,11 +69,11 @@ describe('Adjective', () => {
     const compiled = fixture.nativeElement as HTMLElement;
 
     expect(compiled.textContent).toContain('καλός');
-    expect(compiled.textContent).toContain('καλοῦ');
+    expect(compiled.textContent).toContain('καλού');
     expect(compiled.textContent).toContain('καλοί');
     expect(compiled.textContent).toContain('καλή');
-    expect(compiled.textContent).toContain('καλόν');
-    expect(compiled.textContent).toContain('καλλίων');
+    expect(compiled.textContent).toContain('καλό');
+    expect(compiled.textContent).toContain('καλύτερος');
     expect(compiled.textContent).toContain('κάλλιστος');
   });
 

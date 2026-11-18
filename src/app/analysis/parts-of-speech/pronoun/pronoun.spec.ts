@@ -8,22 +8,22 @@ describe('Pronoun', () => {
 
   const mockPronounLemma: LemmaResponse = {
     id: 3,
-    lemma: 'αὐτός',
+    lemma: 'αυτός',
     pos: 'pronoun',
     glosses: ['he, she, it'],
     forms: [
-      { form: 'αὐτός', features: ['masculine', 'nominative', 'singular'] },
-      { form: 'αὐτοῦ', features: ['masculine', 'genitive', 'singular'] },
-      { form: 'αὐτὸν', features: ['masculine', 'accusative', 'singular'] },
-      { form: 'αὐτοί', features: ['masculine', 'nominative', 'plural'] },
-      { form: 'αὐτῶν', features: ['masculine', 'genitive', 'plural'] },
-      { form: 'αὐτούς', features: ['masculine', 'accusative', 'plural'] },
-      { form: 'αὐτή', features: ['feminine', 'nominative', 'singular'] },
-      { form: 'αὐτῆς', features: ['feminine', 'genitive', 'singular'] },
-      { form: 'αὐτήν', features: ['feminine', 'accusative', 'singular'] },
-      { form: 'αὐταί', features: ['feminine', 'nominative', 'plural'] },
-      { form: 'αὐτῶν', features: ['feminine', 'genitive', 'plural'] },
-      { form: 'αὐτάς', features: ['feminine', 'accusative', 'plural'] },
+      { form: 'αυτός', features: ['masculine', 'nominative', 'singular'] },
+      { form: 'αυτού', features: ['masculine', 'genitive', 'singular'] },
+      { form: 'αυτόν', features: ['masculine', 'accusative', 'singular'] },
+      { form: 'αυτοί', features: ['masculine', 'nominative', 'plural'] },
+      { form: 'αυτών', features: ['masculine', 'genitive', 'plural'] },
+      { form: 'αυτούς', features: ['masculine', 'accusative', 'plural'] },
+      { form: 'αυτή', features: ['feminine', 'nominative', 'singular'] },
+      { form: 'αυτής', features: ['feminine', 'genitive', 'singular'] },
+      { form: 'αυτήν', features: ['feminine', 'accusative', 'singular'] },
+      { form: 'αυτές', features: ['feminine', 'nominative', 'plural'] },
+      { form: 'αυτών', features: ['feminine', 'genitive', 'plural'] },
+      { form: 'αυτές', features: ['feminine', 'accusative', 'plural'] },
     ],
     examples: [],
   };
@@ -71,12 +71,12 @@ describe('Pronoun', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.textContent).toContain('αὐτός');
-    expect(compiled.textContent).toContain('αὐτοῦ');
-    expect(compiled.textContent).toContain('αὐτὸν');
-    expect(compiled.textContent).toContain('αὐτή');
-    expect(compiled.textContent).toContain('αὐτῆς');
-    expect(compiled.textContent).toContain('αὐτήν');
+    expect(compiled.textContent).toContain('αυτός');
+    expect(compiled.textContent).toContain('αυτού');
+    expect(compiled.textContent).toContain('αυτόν');
+    expect(compiled.textContent).toContain('αυτή');
+    expect(compiled.textContent).toContain('αυτής');
+    expect(compiled.textContent).toContain('αυτήν');
   });
 
   it('should show dashes for missing forms', () => {
