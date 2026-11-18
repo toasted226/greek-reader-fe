@@ -8,19 +8,19 @@ describe('Numeral', () => {
 
   const mockNumeralLemma: LemmaResponse = {
     id: 1,
-    lemma: 'εἷς',
+    lemma: 'ένας',
     pos: 'numeral',
     glosses: ['one'],
     forms: [
-      { form: 'εἷς', features: ['masculine', 'nominative'] },
-      { form: 'ἕνα', features: ['masculine', 'accusative'] },
-      { form: 'ἑνός', features: ['masculine', 'genitive'] },
+      { form: 'ένας', features: ['masculine', 'nominative'] },
+      { form: 'έναν', features: ['masculine', 'accusative'] },
+      { form: 'ενός', features: ['masculine', 'genitive'] },
       { form: 'μία', features: ['feminine', 'nominative'] },
-      { form: 'μίαν', features: ['feminine', 'accusative'] },
-      { form: 'μιᾶς', features: ['feminine', 'genitive'] },
-      { form: 'ἕν', features: ['neuter', 'nominative'] },
-      { form: 'ἕν', features: ['neuter', 'accusative'] },
-      { form: 'ἑνός', features: ['neuter', 'genitive'] },
+      { form: 'μία', features: ['feminine', 'accusative'] },
+      { form: 'μιας', features: ['feminine', 'genitive'] },
+      { form: 'ένα', features: ['neuter', 'nominative'] },
+      { form: 'ένα', features: ['neuter', 'accusative'] },
+      { form: 'ενός', features: ['neuter', 'genitive'] },
     ],
     examples: [],
   };
@@ -69,11 +69,12 @@ describe('Numeral', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.textContent).toContain('εἷς');
-    expect(compiled.textContent).toContain('ἕνα');
+    expect(compiled.textContent).toContain('ένας');
+    expect(compiled.textContent).toContain('έναν');
+    expect(compiled.textContent).toContain('ενός');
     expect(compiled.textContent).toContain('μία');
-    expect(compiled.textContent).toContain('μίαν');
-    expect(compiled.textContent).toContain('ἕν');
+    expect(compiled.textContent).toContain('μιας');
+    expect(compiled.textContent).toContain('ένα');
   });
 
   it('should render the available forms for each supported case', () => {

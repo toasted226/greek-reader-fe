@@ -1,16 +1,17 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { LemmaItem } from '../../analysis/lemma-item/lemma-item';
+import { ActiveFilterPillsComponent } from '../../analysis/lemma-filter/active-filter-pills.component';
 import { LemmaFilterComponent } from '../../analysis/lemma-filter/lemma-filter.component';
 import { LemmaFilterState } from '../../analysis/lemma-filter/lemma-filter-state';
 import { DictionaryFilterService } from './dictionary-filter.service';
 
 @Component({
   selector: 'app-dictionary',
-  imports: [LemmaItem, LemmaFilterComponent],
+  imports: [LemmaItem, LemmaFilterComponent, ActiveFilterPillsComponent],
   providers: [
     DictionaryFilterService,
-    // The shared filter component injects the abstract base; each page binds
+    // The shared filter/pill components inject the abstract base; each page binds
     // it to its own concrete service. Dictionary is page-scoped: fresh filter
     // state per visit.
     { provide: LemmaFilterState, useExisting: DictionaryFilterService },

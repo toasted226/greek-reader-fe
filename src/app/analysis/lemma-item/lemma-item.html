@@ -1,18 +1,22 @@
-<div class="flex flex-col gap-3 p-4 rounded-xl border border-border-default bg-surface-card shadow-2xs">
+<div
+  class="flex flex-col gap-3 p-4 rounded-xl border border-border-default bg-surface-card shadow-2xs"
+>
   <!-- Lemma and PoS -->
   <div class="flex items-center justify-between gap-2">
     <div class="flex gap-2 items-center">
       <span class="text-xl font-bold text-text-primary">{{ lemma().lemma }}</span>
-      @if (lemma().pos === "noun") {
+      @if (lemma().pos === 'noun') {
         <span class="italic">{{ getGender() }}</span>
       }
-      @if (lemma().pos === "article") {
+      @if (lemma().pos === 'article') {
         <span class="italic">{{ getArticleType() }}</span>
       }
     </div>
     <div class="flex items-center gap-2">
       @if (lemma().pos) {
-        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-brand-soft text-brand-primary">
+        <span
+          class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-brand-soft text-brand-primary"
+        >
           {{ lemma().pos }}
         </span>
       }
@@ -27,11 +31,18 @@
       >
         @if (isSaved()) {
           <svg aria-hidden="true" class="size-5 fill-current" viewBox="0 0 24 24">
-            <path d="M6 3.75A1.75 1.75 0 0 1 7.75 2h8.5A1.75 1.75 0 0 1 18 3.75V22l-6-4-6 4V3.75Z" />
+            <path
+              d="M6 3.75A1.75 1.75 0 0 1 7.75 2h8.5A1.75 1.75 0 0 1 18 3.75V22l-6-4-6 4V3.75Z"
+            />
           </svg>
         } @else {
           <svg aria-hidden="true" class="size-5 fill-none stroke-current" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 3.75A1.75 1.75 0 0 1 7.75 2h8.5A1.75 1.75 0 0 1 18 3.75V22l-6-4-6 4V3.75Z" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M6 3.75A1.75 1.75 0 0 1 7.75 2h8.5A1.75 1.75 0 0 1 18 3.75V22l-6-4-6 4V3.75Z"
+            />
           </svg>
         }
       </button>
@@ -86,7 +97,7 @@
         </svg>
       </button>
       @if (showInflectionTable()) {
-        <app-inflection-table [lemma]="lemma()" />
+        <app-inflection-table id="inflection-table" [lemma]="lemma()" />
       }
     </div>
   }
@@ -99,7 +110,7 @@
         class="flex w-full items-center justify-between gap-2 text-left hover:bg-brand-primary/5 rounded p-2"
         (click)="showExamples.set(!showExamples())"
         [attr.aria-expanded]="showExamples()"
-        aria-controls="inflection-table"
+        aria-controls="examples-list"
       >
         <span class="font-medium text-text-secondary">Examples</span>
         <svg
@@ -117,9 +128,11 @@
         </svg>
       </button>
       @if (showExamples()) {
-        <div class="flex flex-col gap-2">
+        <div id="examples-list" class="flex flex-col gap-2">
           @for (eg of lemma().examples; track $index) {
-            <div class="flex flex-col gap-0.5 text-sm p-2 rounded-lg bg-surface-page border border-border-default">
+            <div
+              class="flex flex-col gap-0.5 text-sm p-2 rounded-lg bg-surface-page border border-border-default"
+            >
               <span class="text-text-primary">{{ eg.greek }}</span>
               <span class="text-text-secondary italic">{{ eg.english }}</span>
             </div>

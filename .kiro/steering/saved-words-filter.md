@@ -126,7 +126,7 @@ Scoped to the saved-words page (`providedIn: SavedWordsComponent` or root — TB
   - `exampleSearch: signal<string>('')`
 - Exposes `hasActiveFilters: Signal<boolean>` (computed)
 - Exposes `availableFeatures: Signal<FeatureEntry[]>` (computed from POS) — each entry has `key`, `label`, `disabled` (true when not applicable to selected POS)
-- Exposes `setFilter(key, value)` and `clearFilters()` methods
+- Exposes `setPartOfSpeech()`, `toggleFeature()`, `clearFilter(key)`, and `clearFilters()` methods
 - Calls `LexiconEndpointsService.lemmasGet(...)` with current filter values on every filter change (debounced 300 ms for text inputs)
 - Owns the `savedLemmas`, `loading`, and `loadError` signals (currently on `SavedLemmasService` — either extend that service or have `SavedWordsFilterService` compose it)
 
@@ -146,9 +146,9 @@ Standalone. Injected into `SavedWordsComponent`. Binds entirely to `SavedWordsFi
 - Example/context sentence text search
 
 **Active filter summary bar** (shown below filter rows when any filter is active):
-- Result count: "Showing N of M words"
 - Dismissible tags for each active filter
 - "Clear all" button
+- Now lives in the shared `ActiveFilterPillsComponent` — see Step 5 and `.kiro/steering/lemma-filter-reuse.md` (W6). A result count was planned but never added; the filter component itself has no access to a total.
 
 ---
 
@@ -210,14 +210,13 @@ Work through these steps one at a time. Update the checkbox when complete.
 - [x] Build verified passing
 
 ### Step 5 — Active filter summary bar ✅
-- [x] Added summary bar to `saved-words.component.html`, rendered between the filter component and the word list when `filterService.hasActiveFilters()` is true
-- [x] `activeFilterPills` computed signal on `SavedWordsComponent` maps each active filter to an `ActiveFilterPill` with `id`, `label`, and a `remove()` closure
+- [x] Rendered between the filter component and the word list when `filterService.hasActiveFilters()` is true
 - [x] One pill per active filter: lemma, form, POS, each selected feature (individual pills), minDate, maxDate, latest, example
-- [x] Text inputs: `remove()` resets both the signal and the debounce subject so the input element's displayed value stays in sync
 - [x] "Clear all" button calls `filterService.clearFilters()`
 - [x] Summary bar uses `role="status" aria-live="polite"` so screen readers announce filter changes
 - [x] Result count omitted for now — the API does not return a total count with the filtered response (revisit in Step 6 if the endpoint is extended)
 - [x] Build verified passing
+- [x] **Later refactor:** the bar was extracted from `SavedWordsComponent` into `src/app/analysis/lemma-filter/active-filter-pills.component.{ts,html}` and is now shared with the Dictionary page. Labels come from the pure `buildFilterPills(state, options)` helper in `active-filter-pills.ts`; text-pill removal calls `state.clearFilter(key)` (which also cancels the pending debounce), individual feature pills call `state.toggleFeature(key)`, and the page's old `activeFilterPills` computed was deleted. Dictionary hides the date/Latest pills via `[showDates]="false" [showLatest]="false"`.
 
 ### Step 6 — Integration & polish ✅
 - [x] Confirmed `SavedLemmasService` (app-root singleton) and `SavedWordsFilterService` are fully independent — `SavedLemmasService` is used only by `LemmaItem` for toggle/isSaved; the saved-words page reads exclusively from `SavedWordsFilterService`

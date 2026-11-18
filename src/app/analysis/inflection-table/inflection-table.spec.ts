@@ -39,13 +39,13 @@ describe('InflectionTable', () => {
 
   const mockPronounLemma: LemmaResponse = {
     id: 8,
-    lemma: 'αὐτός',
+    lemma: 'αυτός',
     pos: 'pronoun',
     glosses: ['he, she, it'],
     forms: [
-      { form: 'αὐτός', features: ['masculine', 'nominative', 'singular'] },
-      { form: 'αὐτοῦ', features: ['masculine', 'genitive', 'singular'] },
-      { form: 'αὐτή', features: ['feminine', 'nominative', 'singular'] },
+      { form: 'αυτός', features: ['masculine', 'nominative', 'singular'] },
+      { form: 'αυτού', features: ['masculine', 'genitive', 'singular'] },
+      { form: 'αυτή', features: ['feminine', 'nominative', 'singular'] },
     ],
     examples: [],
   };
@@ -65,25 +65,31 @@ describe('InflectionTable', () => {
 
   const mockNumeralLemma: LemmaResponse = {
     id: 10,
-    lemma: 'εἷς',
+    lemma: 'ένας',
     pos: 'numeral',
     glosses: ['one'],
     forms: [
-      { form: 'εἷς', features: ['masculine', 'nominative'] },
+      { form: 'ένας', features: ['masculine', 'nominative'] },
       { form: 'μία', features: ['feminine', 'nominative'] },
-      { form: 'ἕν', features: ['neuter', 'nominative'] },
+      { form: 'ένα', features: ['neuter', 'nominative'] },
     ],
     examples: [],
   };
 
   const mockVerbLemma: LemmaResponse = {
     id: 11,
-    lemma: 'εἰμί',
+    lemma: 'είμαι',
     pos: 'verb',
     glosses: ['I am'],
     forms: [
-      { form: 'εἰμί', features: ['indicative', 'active', 'imperfective', 'present', 'first-person', 'singular'] },
-      { form: 'εἶ', features: ['indicative', 'active', 'imperfective', 'present', 'second-person', 'singular'] },
+      {
+        form: 'είμαι',
+        features: ['indicative', 'active', 'imperfective', 'present', 'first-person', 'singular'],
+      },
+      {
+        form: 'είσαι',
+        features: ['indicative', 'active', 'imperfective', 'present', 'second-person', 'singular'],
+      },
     ],
     examples: [],
   };
@@ -218,11 +224,11 @@ describe('InflectionTable', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.textContent).toContain('εἰμί');
-    expect(compiled.textContent).toContain('εἶ');
+    expect(compiled.textContent).toContain('είμαι');
+    expect(compiled.textContent).toContain('είσαι');
     expect(compiled.querySelector('app-verb')).not.toBeNull();
     expect(compiled.textContent).toContain('Indicative · Active · Imperfective · Present');
-    expect(compiled.textContent).toContain('εἰμί');
+    expect(compiled.textContent).toContain('είμαι');
     expect(compiled.textContent).toContain('Singular');
     expect(compiled.textContent).toContain('Plural');
     expect(compiled.querySelectorAll('table').length).toBe(1);

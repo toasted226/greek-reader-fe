@@ -1,7 +1,7 @@
 # Lemma Filter — Reuse for Global Lemma Search
 
-**Status:** the Dictionary page exists (`/dashboard/dictionary`) with unfiltered, paginated browsing; filter reuse is designed but not implemented.
-**Owner of the backend half:** the API author (adding filters to `GET /lexicon/query`).
+**Status:** implemented. The Dictionary page (`/dashboard/dictionary`) uses the shared filter UI/state, paginated `GET /lexicon/query`, and the shared active-filter pill bar. The design below is kept for context; where it disagrees with the code, the code wins.
+**Backend half:** shipped — `GET /lexicon/query` accepts `partOfSpeech`, `lemma`, `form`, `formContains`, `example`, `featureList`, `offset`, `limit` and returns a paginated `LemmaPageResponse`.
 **Read this together with:** `.kiro/steering/saved-words-filter.md` (the original saved-words build-out).
 
 ---
@@ -13,11 +13,11 @@ One filter UI + one filter state model, reused for two search surfaces:
 | Surface | Endpoint | Returns | Filters |
 |---|---|---|---|
 | Saved words (`/saved-words`) | `GET /lemmas` | `UserLemmaResponse[]` | `partOfSpeech`, `lemma`, `form`, `example`, `featureList`, `minDate`, `maxDate`, `latest` |
-| Global lemmas (new) | `GET /lexicon/query` | `LemmaResponse[]` | `partOfSpeech`, `lemma`, `form`, `featureList` |
+| Global lemmas (Dictionary) | `GET /lexicon/query` | paginated `LemmaPageResponse` (`items`, `offset`, `limit`, `total`) | `partOfSpeech`, `lemma`, `formContains`, `example`, `featureList`, `offset`, `limit` |
 
-The global endpoint is being extended to accept the same filters **except** `minDate`/`maxDate` (saved-on dates), `example` (context sentence) and `latest` — all three are per-user saved-word concepts. Confirmed: `latest` will **not** exist as a filter for global lemma search.
+Saved-on dates (`minDate`/`maxDate`) and `latest` remain saved-words-only: they are neither shown nor sent on Dictionary. `example` **is** shown and sent on Dictionary as a lexicon example-sentence search. The inflected-form filter is sent as `formContains` (substring match), never as exact `form`. Confirmed: `latest` will **not** exist as a filter for global lemma search.
 
-The Dictionary page shell and pagination are implemented; the filter reuse design below is not.
+The original design below assumed an unpaginated endpoint with a separate `LemmaQuerySource` layer. The implementation keeps the same split of shared state vs. surface-specific fetching, but each concrete service calls the generated client directly; `DictionaryFilterService` also owns pagination (20 items per page).
 
 ---
 
@@ -96,14 +96,17 @@ Path is `/lexicon/features` rather than `/lemmas/features` because the feature l
 
 ## Current state (what exists today)
 
-| File | Role | Reusable as-is? |
+| File | Role | Status |
 |---|---|---|
-| `src/app/analysis/filter-features.ts` | Feature/POS taxonomy + `featuresForPos()` | ✅ fully scope-neutral |
-| `src/app/pages/saved-words/saved-words-filter.service.ts` | Filter state **and** saved-words HTTP **and** result state, `providedIn: 'root'` | ❌ three concerns in one class |
-| `src/app/pages/saved-words/saved-words-filter/saved-words-filter.component.{ts,html}` | Filter bar UI, injects the concrete service | ❌ hardcoded service, hardcoded saved-only fields |
-| `src/app/pages/saved-words/saved-words.component.ts` | `activeFilterPills` computed, mutates service signals + debounce subjects | ❌ lives on the page, not reusable |
-| `src/app/pages/saved-words/saved-words.component.html` | loading / error / empty / `@for` over `LemmaItem` | ❌ inline in the page |
-| `src/app/analysis/lemma-item/lemma-item.ts` | Result card, injects `SavedLemmasService` for save state | ⚠️ `contextSentence` is `input.required` |
+| `src/app/analysis/filter-features.ts` | Feature/POS taxonomy + labels + `featuresForPos()` | ✅ fully scope-neutral |
+| `src/app/analysis/lemma-filter/lemma-filter-state.ts` | Shared filter signals, debounces, feature catalog, `clearFilter()`/`clearFilters()` | ✅ abstract base; no HTTP dependency |
+| `src/app/pages/saved-words/saved-words-filter.service.ts` | Saved-words fetch + results; extends `LemmaFilterState`, stays root-provided | ✅ state persists across navigation |
+| `src/app/pages/dictionary/dictionary-filter.service.ts` | Paginated lexicon fetch + results; page-scoped provider | ✅ new |
+| `src/app/analysis/lemma-filter/lemma-filter.component.{ts,html}` | Shared filter bar; saved-only fields gated by `showDates`/`showLatest` inputs | ✅ injects the abstract base only |
+| `src/app/analysis/lemma-filter/active-filter-pills.{ts}` + `active-filter-pills.component.{ts,html}` | Pure `buildFilterPills()` + shared pill bar with remove and "Clear all" | ✅ used by both pages |
+| `src/app/pages/saved-words/saved-words.component.{ts,html}` | Saved-words page; aliases `LemmaFilterState` to its root singleton | ✅ pill bar is now shared |
+| `src/app/pages/dictionary/dictionary.component.{ts,html}` | Dictionary page; aliases `LemmaFilterState` to its page-scoped service | ✅ new |
+| `src/app/analysis/lemma-item/lemma-item.ts` | Result card, injects `SavedLemmasService` for save state | ⚠️ `contextSentence` is `input.required`; Dictionary passes `''` |
 
 ---
 
@@ -209,15 +212,12 @@ Move the current `fetchLemmas()` body (`saved-words-filter.service.ts`) here.
 - **Fix the duplicate DOM ids.** `filter-lemma`, `filter-form`, `filter-pos`, `filter-min-date`, `filter-max-date`, `filter-example`, `filter-more` are hardcoded; two instances on one page break `<label for>` and `aria-controls`. Generate a per-instance prefix and bind `[id]`, `[for]`, `[attr.aria-controls]`.
 - Keep `featureChipClasses()` as-is — its class strings must stay literal so Tailwind's JIT scanner sees them.
 
-### W6 — Extract the active-filter pills (unblocked)
+### W6 — Extract the active-filter pills ✅
 
-From `saved-words.component.ts` (`activeFilterPills`):
-
-- Pure function `buildFilterPills(state): ActiveFilterPill[]` — easy to unit test.
-- `ActiveFilterPillsComponent` rendering them with `role="status" aria-live="polite"`.
-- `remove()` callbacks use `state.clearFilter(key)` (W1) instead of writing signals and `lemmaInput$.next('')`.
-
-The pill labels need `ALL_FEATURES`/`POS_LABELS` from `filter-features.ts` — already scope-neutral.
+- `src/app/analysis/lemma-filter/active-filter-pills.ts` — pure `buildFilterPills(state, options)` returning `ActiveFilterPill[]`; labels use `POS_LABELS`/`featureLabel` from `filter-features.ts`.
+- `active-filter-pills.component.{ts,html}` — shared bar with `role="status" aria-live="polite"`, one remove button per pill, and "Clear all". `showDates`/`showLatest` inputs gate the saved-only pills; the example pill is shown on both surfaces.
+- Text pills remove via `state.clearFilter(key)`, which also cancels the pending 300 ms debounce so a keystroke cannot restore a just-removed pill. Individual feature pills use `state.toggleFeature(key)` (one feature, not all).
+- Mounted on both pages: Saved Words with defaults, Dictionary with `[showDates]="false" [showLatest]="false"`. The old `activeFilterPills` computed was deleted from `saved-words.component.ts`.
 
 ### W7 — Extract the result list (unblocked)
 
@@ -312,9 +312,9 @@ Feature keys in `filter-features.ts` (`masculine`, `first-person`, …) match th
 
 ## Acceptance criteria for "reusable"
 
-1. The same component renders on `/saved-words` and the global page, with saved-only fields hidden by `supports`.
+1. The same filter/pill components render on `/saved-words` and `/dashboard/dictionary`, with saved-only fields hidden by `showDates`/`showLatest` inputs.
 2. No file under `analysis/lemma-filter/` imports `SavedWordsFilterService`, `UserLemmaResponse`, or `BASE_PATH_DEFAULT`.
-3. Filtering on the global page sends exactly `partOfSpeech`, `lemma`, `form`, `featureList` — never `minDate`, `maxDate`, or `example`.
-4. Both surfaces can be open in the same session without sharing filter state or results.
-5. Two instances of the component on one page do not produce duplicate DOM ids.
-6. `bun run build` passes; `bun run test` shows no new failures (the `analyse.component.spec.ts` failures are pre-existing).
+3. Dictionary filtering sends `partOfSpeech`, `lemma`, `formContains`, `example`, `featureList`, `offset`, `limit` — never exact `form`, `minDate`, `maxDate`, or `latest`. Any filter change resets to offset 0.
+4. Both surfaces can be open in the same session without sharing filter state or results (Dictionary is page-scoped; Saved Words keeps its root singleton).
+5. Two instances of the filter component on one page do not produce duplicate DOM ids.
+6. `bun run build` passes; `bun run test` shows no new failures (the `info-panel.spec.ts` / `lemma-item.spec.ts` collapsed-example failures are pre-existing).

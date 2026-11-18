@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { LexiconEndpointsService, LemmaPageResponse, LemmaResponse } from '../../../api';
 import { DictionaryComponent } from './dictionary.component';
+import { DictionaryFilterService } from './dictionary-filter.service';
 
 describe('DictionaryComponent', () => {
   const lemma: LemmaResponse = {
@@ -185,6 +186,119 @@ describe('DictionaryComponent', () => {
       undefined,
       undefined,
       20,
+      20,
+    );
+  });
+
+  it('shows applied filters as removable pills, without saved-only filters', () => {
+    lexiconServiceMock.lexiconFeaturesGet.mockReturnValue(of({ features: ['present'] }));
+    const fixture = TestBed.createComponent(DictionaryComponent);
+    const service = fixture.debugElement.injector.get(DictionaryFilterService);
+    fixture.detectChanges();
+
+    service.lemmaSearch.set('λόγος');
+    service.formSearch.set('λόγου');
+    service.exampleSearch.set('sky');
+    service.setPartOfSpeech('verb');
+    service.toggleFeature('present');
+    TestBed.tick();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const bar = compiled.querySelector('[aria-label="Active filters"]');
+    expect(bar).toBeTruthy();
+    const labels = Array.from(bar!.querySelectorAll<HTMLButtonElement>('button')).map((b) =>
+      b.getAttribute('aria-label'),
+    );
+    expect(labels).toContain('Remove filter: Lemma: "λόγος"');
+    expect(labels).toContain('Remove filter: Form: "λόγου"');
+    expect(labels).toContain('Remove filter: Verb');
+    expect(labels).toContain('Remove filter: Present');
+    expect(labels).toContain('Remove filter: Context: "sky"');
+    expect(labels.some((label) => label?.startsWith('Remove filter: From:'))).toBe(false);
+    expect(labels).not.toContain('Remove filter: Latest only');
+  });
+
+  it('resets to the first page when a pill is removed', () => {
+    lexiconServiceMock.lexiconQueryGet.mockImplementation(
+      (
+        _pos: unknown,
+        _lemma: unknown,
+        _form: unknown,
+        _contains: unknown,
+        _example: unknown,
+        _features: unknown,
+        offset: number,
+        limit: number,
+      ) => of({ items: [], offset, limit, total: 45 }),
+    );
+    const fixture = TestBed.createComponent(DictionaryComponent);
+    const service = fixture.debugElement.injector.get(DictionaryFilterService);
+    fixture.detectChanges();
+
+    service.lemmaSearch.set('λόγος');
+    TestBed.tick();
+    service.next();
+    TestBed.tick();
+    fixture.detectChanges();
+    expect(service.offset()).toBe(20);
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const removeButton = Array.from(
+      compiled.querySelectorAll<HTMLButtonElement>('button[aria-label^="Remove filter: "]'),
+    ).find((button) => button.getAttribute('aria-label') === 'Remove filter: Lemma: "λόγος"');
+    expect(removeButton).toBeTruthy();
+    removeButton?.click();
+    TestBed.tick();
+    fixture.detectChanges();
+
+    expect(service.lemmaSearch()).toBe('');
+    expect(service.offset()).toBe(0);
+    expect(lexiconServiceMock.lexiconQueryGet).toHaveBeenLastCalledWith(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      0,
+      20,
+    );
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('[aria-label="Active filters"]'),
+    ).toBeNull();
+  });
+
+  it('clears all filters from the pill bar and restores the unfiltered page', () => {
+    const fixture = TestBed.createComponent(DictionaryComponent);
+    const service = fixture.debugElement.injector.get(DictionaryFilterService);
+    fixture.detectChanges();
+
+    service.lemmaSearch.set('λόγος');
+    service.exampleSearch.set('sky');
+    TestBed.tick();
+    fixture.detectChanges();
+
+    const clearButton = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>(
+      'button[aria-label="Clear all active filters"]',
+    );
+    expect(clearButton).toBeTruthy();
+    clearButton?.click();
+    TestBed.tick();
+    fixture.detectChanges();
+
+    expect(service.hasActiveFilters()).toBe(false);
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('[aria-label="Active filters"]'),
+    ).toBeNull();
+    expect(lexiconServiceMock.lexiconQueryGet).toHaveBeenLastCalledWith(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      0,
       20,
     );
   });

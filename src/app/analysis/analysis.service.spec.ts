@@ -14,7 +14,7 @@ describe('AnalysisService', () => {
       lemmas: [
         {
           id: 14,
-          lemma: 'ὁ',
+          lemma: 'ο',
           pos: 'Article',
           glosses: ['the'],
           examples: [],
@@ -138,7 +138,7 @@ describe('AnalysisService', () => {
 
     it('should handle API error gracefully', () => {
       lexiconServiceMock.lexiconAnalysePost.mockReturnValue(
-        throwError(() => new Error('Network error'))
+        throwError(() => new Error('Network error')),
       );
 
       service.inputText.set('test');

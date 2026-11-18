@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LemmaItem } from './lemma-item';
 import { LemmaResponse } from '../../../api';
 import { SavedLemmasService } from '../saved-lemmas.service';
+import { expandExamples, getExamplesToggle } from '../testing/disclosures';
 
 describe('LemmaItem', () => {
   let component: LemmaItem;
@@ -16,18 +17,18 @@ describe('LemmaItem', () => {
       { form: 'λόγος', features: ['nom', 'masc', 'sg'] },
       { form: 'λόγου', features: ['gen', 'masc', 'sg'] },
     ],
-    examples: [
-      { greek: 'Ἐν ἀρχῇ ἦν ὁ λόγος.', english: 'In the beginning was the Word.' },
-    ],
+    examples: [{ greek: 'Ο λόγος του ήταν πειστικός.', english: 'His speech was convincing.' }],
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [LemmaItem],
-      providers: [{
-        provide: SavedLemmasService,
-        useValue: { isSaved: () => false, toggle: vi.fn() },
-      }],
+      providers: [
+        {
+          provide: SavedLemmasService,
+          useValue: { isSaved: () => false, toggle: vi.fn() },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LemmaItem);
@@ -36,7 +37,7 @@ describe('LemmaItem', () => {
 
   it('should create and render lemma, pos badge, glosses, forms, and examples', () => {
     fixture.componentRef.setInput('lemma', mockLemma);
-    fixture.componentRef.setInput('contextSentence', 'Ἐν ἀρχῇ ἦν ὁ λόγος.');
+    fixture.componentRef.setInput('contextSentence', 'Ο λόγος του ήταν πειστικός.');
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
@@ -65,16 +66,22 @@ describe('LemmaItem', () => {
     expect(compiled.textContent).toContain('λόγου');
     expect(compiled.textContent).toContain('gen, masc, sg');
 
-    // Examples
+    // Examples are rendered behind a collapsed disclosure.
     expect(compiled.textContent).toContain('Examples');
-    expect(compiled.textContent).toContain('Ἐν ἀρχῇ ἦν ὁ λόγος.');
-    expect(compiled.textContent).toContain('In the beginning was the Word.');
+    const examplesToggle = getExamplesToggle(compiled);
+    expect(examplesToggle.getAttribute('aria-expanded')).toBe('false');
+    expect(compiled.textContent).not.toContain('Ο λόγος του ήταν πειστικός.');
+
+    expect(expandExamples(fixture)).toBe(examplesToggle);
+    expect(examplesToggle.getAttribute('aria-expanded')).toBe('true');
+    expect(compiled.textContent).toContain('Ο λόγος του ήταν πειστικός.');
+    expect(compiled.textContent).toContain('His speech was convincing.');
   });
 
   it('should gracefully handle lemma without pos, glosses, forms, or examples', () => {
     const minimalLemma: LemmaResponse = {
       id: 13,
-      lemma: 'καί',
+      lemma: 'και',
       pos: '',
       glosses: [],
       forms: [],
@@ -82,11 +89,11 @@ describe('LemmaItem', () => {
     };
 
     fixture.componentRef.setInput('lemma', minimalLemma);
-    fixture.componentRef.setInput('contextSentence', 'καὶ εἶπεν αὐτοῖς.');
+    fixture.componentRef.setInput('contextSentence', 'Θέλω ψωμί και τυρί.');
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('καί');
+    expect(compiled.textContent).toContain('και');
     expect(compiled.textContent).not.toContain('Definitions');
     expect(compiled.textContent).not.toContain('Inflections');
     expect(compiled.textContent).not.toContain('Examples');
