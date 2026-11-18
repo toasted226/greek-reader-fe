@@ -24,6 +24,10 @@ export interface LemmaFilterQuery {
   latest: boolean;
 }
 
+/** Keys that can be cleared individually — one per active-filter pill. */
+export type LemmaFilterKey =
+  'lemma' | 'form' | 'example' | 'pos' | 'features' | 'minDate' | 'maxDate' | 'latest';
+
 const EMPTY_FILTERS: LemmaFilterQuery = {
   lemma: '',
   form: '',
@@ -229,7 +233,53 @@ export abstract class LemmaFilterState {
     );
   }
 
+  /**
+   * Clears one filter by key. Text filters also cancel their pending debounce:
+   * otherwise a keystroke still in flight lands 300 ms later and restores the
+   * value the user just removed via its pill.
+   */
+  clearFilter(key: LemmaFilterKey): void {
+    switch (key) {
+      case 'lemma':
+        this.lemmaSearch.set('');
+        this.lemmaInput$.next('');
+        break;
+      case 'form':
+        this.formSearch.set('');
+        this.formInput$.next('');
+        break;
+      case 'example':
+        this.exampleSearch.set('');
+        this.exampleInput$.next('');
+        break;
+      case 'pos':
+        this.setPartOfSpeech(null);
+        break;
+      case 'features':
+        this.selectedFeatures.set([]);
+        break;
+      case 'minDate':
+        this.minDate.set(null);
+        break;
+      case 'maxDate':
+        this.maxDate.set(null);
+        break;
+      case 'latest':
+        this.latest.set(false);
+        break;
+    }
+  }
+
   clearFilters(): void {
+    // Cancel pending debounces first. Setting the signals alone lets an
+    // in-flight text emission reapply a filter just after "Clear all".
+    this.lemmaInput$.next('');
+    this.formInput$.next('');
+    this.exampleInput$.next('');
+
+    // Keep the signal writes batched: toObservable(allFilters) emits on every
+    // change, so clearing each field individually would issue one fetch per
+    // field instead of one for the whole reset.
     this.lemmaSearch.set(EMPTY_FILTERS.lemma);
     this.formSearch.set(EMPTY_FILTERS.form);
     this.exampleSearch.set(EMPTY_FILTERS.example);

@@ -11,6 +11,8 @@
     examplePlaceholder="Search example sentences…"
   />
 
+  <app-active-filter-pills [showDates]="false" [showLatest]="false" />
+
   @if (filterService.loading()) {
     <p class="text-text-secondary" role="status">Loading lemmas…</p>
   } @else if (filterService.loadError()) {
