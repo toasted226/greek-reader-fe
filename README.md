@@ -1,59 +1,15 @@
 # GreekReader
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.3.
+The Angular-powered frontend for #[the Greek Reader API](https://github.com/toasted226/greek-reader-api). You can find find more information about how the Greek Reader project works there.
 
-## Development server
+This site is live and hosted at https://greek-reader.modulrza.app, featuring morphological text-analysis, file uploads, dictionary searching, and user-saved lemmas. A react native app and a native #[Iced](https://github.com/iced-rs/iced)-based Rust desktop client is in progress but not yet published.
 
-To start a local development server, run:
+## License
 
-```bash
-ng serve
-```
+This project is licensed under the [MIT License](LICENSE).
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Dictionary data is derived from [Wiktionary](https://en.wiktionary.org/) contributors' work, extracted by [Kaikki.org](https://kaikki.org/) using [wiktextract](https://github.com/tatuylonen/wiktextract). It is available under the [Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/). The data has been modified for this project (filtered, normalised and restructured). The MIT licence in this repository covers the source code only, not the Wiktionary-derived data.
 
-## Code scaffolding
+## Contributing
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Issues and pull requests are welcome. There is no formal contribution guide or automated test suite yet, so please keep changes focused, describe the behaviour you changed, and include manual verification steps (the API, the F# engine, and the frontend are separate repositories, so note which ones a change touches).
